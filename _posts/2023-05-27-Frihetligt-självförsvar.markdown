@@ -1,9 +1,11 @@
 ---
 layout: post
 title: "Frihetligt självförsvar - Henrik Jönsson"
+shorttitle: "Frihetligt självförsvar"
 date: 2023-05-27 00:00:00 -0000
 categories: 
     - Books I recently read
+image: frihetlig-självförsvar.jpg
 ---
 
 ![alt text]({{ site.baseurl }}/images/frihetlig-självförsvar.jpg){:height="200px" width="200px"}
