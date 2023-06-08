@@ -18,7 +18,7 @@ This book lays down an idea, that is rather simple to understand at a basic leve
 
 This is like a generator, Taleb explains. The full book can be seen as a derivation of that sentence. But the reader, to understand and appriciate it, will have to read the entire book.
 
-The way I want to write this text is: I will list the idea's that had the biggest impact on me and that I carry with me after having read this book. Also, how I implement them. So here it goes.
+The way I want to write this text is as follows: I will list the idea's that had the biggest impact on me and that I carry with me after having read this book. Also, how I implement them.
 
 
 <h1>The Antifragile human body</h1>
@@ -34,9 +34,15 @@ Taleb argues further that meat should be had very randomly, whereas vegetables c
 
 I believe all this to be true and the reasoning is very logical. So to summarize: eat what your ancestors ate, and have a more random intake of food and composition. I mostly apply this myself by skipping meals entirely sometimes. Eating less of the sweat stuff is more difficult though. I realized that I had never really fasted in my entire life. Not a single day without eating something. I have now, and it was hard. But how delicous the first food afterwards was.
 
-**Cold**
+**Dressing for weather**  
+With similar reasoning as above, I let myself get cold or wet sometimes. Or rather, I don't worry as much whether I will be dressed poorly for the current weather. Freezing cold or soaking wet, my body will enjoy the randomness. Also, the warm shower afterwards is awesome. Of course, I do this up to a limit. I would not expose myself to risk of getting permanent damages.
+
+This also has the positive side effect of not having to think as much about what clothes to wear, since I will be fine either way.
+
+Also, I enjoy going to the extremes. Intense Sauna bathing and dipping in ice water or snow.
 
 **Sickness**
+Easier said than done, but if I can do without painkillers, I avoid them. 
 
 
 
