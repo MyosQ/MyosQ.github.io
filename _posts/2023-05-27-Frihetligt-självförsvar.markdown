@@ -5,10 +5,10 @@ shorttitle: "Frihetligt självförsvar"
 date: 2023-05-27 00:00:00 -0000
 categories: 
     - Books I recently read
-image: frihetlig-självförsvar.jpg
+image: frihetligt-sjalvforsvar.jpg
 ---
 
-![alt text]({{ site.baseurl }}/images/frihetlig-självförsvar.jpg){:height="200px" width="200px"}
+![alt text]({{ site.baseurl }}/images/{{ page.image }}){:height="200px" width="200px"}
 
 Henrik Jönsson är en entreprenör och samhällsdebattör med den politiska inriktningen *libertarianism*. En libertarian förespråkar maximal individuell politisk frihet, begränsande av stat, äganderätt etc. Jag har under många år följt Henrik på Youtube där han varje vecka publicerar en ny videokrönika. Nyligen bestämde jag mig för att beställa hans första bok, *Frihetligt självförsvar - en fälthandbok för individualister*. Den blev lite av en ögonöppnare för mig eftersom den hjälpte mig att förstå individualism på ett djupare plan. Här är det som gjorde mest intryck på mig.
 
