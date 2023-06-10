@@ -18,7 +18,7 @@ This book lays down an idea, that is rather simple to understand at a basic leve
 
 This is like a generator, Taleb explains. The full book can be seen as a derivation of that sentence. But the reader, to understand and appriciate it, will have to read the entire book.
 
-The way I want to write this text is as follows: I will list the idea's that had the biggest impact on me and that I carry with me after having read this book. Also, how I implement them.
+This text lists the idea's that had the biggest impact on me and that I carry with me after having read this book. Also, how I implement them.
 
 
 <h1>The Antifragile human body</h1>
@@ -41,19 +41,30 @@ This also has the positive side effect of not having to think as much about what
 
 Also, I enjoy going to the extremes. Intense Sauna bathing and dipping in ice water or snow.
 
-**Sickness**
-Easier said than done, but if I can do without painkillers, I avoid them. 
+**Sickness**  
+If I can manage without painkillers, I avoid them.
 
 
 
 <h1>Detect absence of skin in the game</h1>
+To have "Skin in the game" means to be exposed to the downside when wanting the upside. Is is something positive and should be considered ethical. A couple of examples are: a captain on a cruise ship that "goes down" with his ship if it sinks; a pilot flying an aircraft; an entrepreneur investing his own capital in his startup.
 
+Some examples of professions not having their skin in the game are: Bankers, corporate excecutives, theoreticians and journalists who "analyze" and "predict". These will keep the upside, but transfer the downside to other. The journalist for example, is praised when making correct predictions, but is not punished proportionally when his predictions are wrong. To use the terminology in the book, absence of skin in the game means that you are making yourself antifragile at the expense of others. Therefore it should be considered highly unethical.
+
+I truly recommend everyone to be aware of this phenomenon. 
+Taleb also wrote an entire book with the title "Skin in the game". I am looking forward to reading it.
+
+A rule of thumb is to never trust anyone that does have their skin in the game. 
+I would not board a plane if the pilot flying it would not be on it. Would you?
 
 <h1>Academia</h1>
+...
 <!-- Making predictions
 Tragedy of Big Data -->
 
 <h1>Iatrogenics and Naive interventionsim</h1>
+...
 
 <h1>Via negativa</h1>
+...
 
