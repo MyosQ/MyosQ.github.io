@@ -31,7 +31,9 @@ theme: minima
 plugins:
   - jekyll-feed
 
-
+# CV
+markdown:   kramdown
+style:  kjhealy
 
 
 # Exclude from processing.
