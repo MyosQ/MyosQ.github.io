@@ -18,11 +18,11 @@ categories:
     <!-- loop through posts, only select those with certain category -->
     {% for post in site.posts %}
         {% if post.categories contains "Books I recently read" %}
-            <div>
+            <div style="text-align: center;">
                 <a href="{{ post.url }}">
                     <img src="{{ site.baseurl }}/images/{{ post.image }}" alt="image" height="200"/>
                 </a>
-                <p style="text-align: center; font-style: italic;">{{ post.shorttitle | capitalize }}
+                <p style="text-align: center; font-style: italic; font-size: 14px;">{{ post.shorttitle | capitalize }}
                 </p>
             </div>
         {% endif %}
