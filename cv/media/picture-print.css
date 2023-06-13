@@ -1,0 +1,12 @@
+#profile_pic {
+    font-size: 1em;
+    line-height: 2em;
+    position: absolute;
+    top: 0.5em;
+    text-align: right;
+    width: 20%;
+}
+
+#profile_pic img {
+    width: 5.5em;
+}

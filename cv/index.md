@@ -2,14 +2,21 @@
 layout: cv
 title: CV
 ---
-# Isaac Newton
-Physicist, Mathematician, Cambridge professor.
-
-<div id="webaddress">
-<a href="isaac@applesdofall.org">isaac@applesdofall.org</a>
-| <a href="http://en.wikipedia.org/wiki/Isaac_Newton">My wikipedia page</a>
+<!-- ![Alt text]({{ site.baseurl }}/images/frej.jpg) -->
+<div id="profile_pic">
+    <img src="{{ site.baseurl }}/images/frej.jpg" alt="alt text">
 </div>
 
+# Frej Sundqvist
+Problem solver, Programmer, Physicist, Mathematician
+
+<div id="webaddress">
+<a href="https://myosq.github.io">Blog</a>
+| 
+<a href="https://github.com/MyosQ">Github</a>
+|
+<a href="https://www.linkedin.com/in/frej-sundqvist-b8a49a14b/">LinkedIn</a>
+</div>
 
 ## Currently
 
