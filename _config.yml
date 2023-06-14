@@ -33,7 +33,7 @@ plugins:
 
 # CV
 markdown:   kramdown
-style:  davewhipp
+style: custom #davewhipp #kjhealy
 
 
 # Exclude from processing.

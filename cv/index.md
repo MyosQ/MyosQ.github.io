@@ -4,11 +4,11 @@ title: CV
 ---
 <!-- ![Alt text]({{ site.baseurl }}/images/frej.jpg) -->
 <div id="profile_pic">
-    <img src="{{ site.baseurl }}/images/frej.jpg" alt="alt text">
+    <img src="{{ site.baseurl }}/images/cv/frej.jpg" alt="alt text">
 </div>
 
 # Frej Sundqvist
-Problem solver, Programmer, Physicist, Mathematician
+Problem solver, Programmer, Engineer
 
 <div id="webaddress">
 <a href="https://myosq.github.io">Blog</a>
@@ -20,35 +20,45 @@ Problem solver, Programmer, Physicist, Mathematician
 
 ## Currently
 
-Standing on the shoulders of giants
-
-### Specialized in
-
-Laws of motion, gravitation, minting coins, disliking [Robert Hooke](http://en.wikipedia.org/wiki/Robert_Hooke)
+Fullstack developer and engineer at Capia AS in Tromsø, Norway.
 
 
-### Research interests
+## Work experience
 
-Cooling, power series, optics, alchemy, planetary motions, apples.
+`2021 - Present`
+__Capia AS__
+- Fullstack developer and engineer
 
 
 ## Education
 
 `2015 - 2020`
-__Umeå Universitet__ ![Alt text](../images/umea.jpg){:height="auto" width="25px"  style="position:absolute; margin-left:5px;"}
+__Umeå Universitet__ ![Alt text](../images/cv/umea.jpg){:height="auto" width="25px"  style="position:absolute; margin-left:6px;"}
 - Master's degree in engineering physics
 
 
 `2018 - 2019`
-__Julius-Maximilians-Universität Würzburg__ ![Alt text](../images/wuerzburg.png){:height="25px" width="auto" style="position:absolute; margin-left:5px;"}
+__Julius-Maximilians-Universität Würzburg__ ![Alt text](../images/cv/wuerzburg.png){:height="25px" width="auto" style="position:absolute; margin-left:6px;"}
 - Mathematics and robotics
 
 `2012 - 2015`
-__Naturvetenskapsprogrammet, Luleå__ ![Alt text](../images/lulea.png){:height="25px" width="auto" style="position:absolute; margin-left:5px;"}
+__Naturvetenskapsprogrammet, Luleå__ ![Alt text](../images/cv/lulea.png){:height="25px" width="auto" style="position:absolute; margin-left:6px;"}
 - Natural sciences
 
+## Languages
 
+Swedish <!-- ![Alt text](../images/cv/sweden.png){:height="22px" width="auto" style="position:absolute; margin-left:6px;"} -->
 
+English <!-- ![Alt text](../images/cv/uk.png){:height="22px" width="auto" style="position:absolute; margin-left:6px;"} -->
+
+German <!-- ![Alt text](../images/cv/germany.png){:height="22px" width="auto" style="position:absolute; margin-left:6px;"} -->
+
+Norwegian
+<!-- ![Alt text](../images/cv/norway.png){:height="22px" width="auto" style="position:absolute; margin-left:6px;"} -->
+
+## Other interests
+
+reading, running, nature, economics
 
 
 
