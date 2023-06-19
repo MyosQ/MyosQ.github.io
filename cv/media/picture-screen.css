@@ -10,3 +10,25 @@
 #profile_pic img {
     width: 7.5em;
 }
+
+.education-logo {
+    height: 25px;
+    width: auto;
+    position: absolute;
+    margin-left: 11px;
+}
+
+.tech-skill {
+    display: inline;
+    position: relative;
+    left: 25%;
+    margin-bottom: 0.3em;
+    margin-right: 0;
+    width: 55%;
+    padding-left: 10px;
+    padding-right: 10px;
+    > img {
+        width: 20px;
+        margin-left: 5px;
+    }
+}
