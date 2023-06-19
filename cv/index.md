@@ -21,11 +21,27 @@ Problem solver, Programmer, Engineer
 ## Currently
 
 Fullstack developer and engineer at Capia AS in Tromsø, Norway.
-Developing apps using Django, Reactjs and Rshiny among others. Wokring with databases liie MariaDB, Postgres, including postgis. Both directly in SQL and through ORM's. Deploy apps using docker and nginx as reverso proxy. Writing dockerfiles, using dockercompose, and some kubernetes.
+Developing apps using Django, Reactjs and RShiny among others. Working with databases like MariaDB and Postgres, including postgis. Both directly in SQL and through ORM's. I Deploy apps using docker and nginx as reverse proxy. Experienced at writing dockerfiles, using dockercompose, and some kubernetes.
 
 ## Skills
 
 <!-- List of label+image. Some one same line -->
+
+<div class="tech-skill-list">
+    <div class="tech-skill">Python<img src="./images/Python.svg" alt="alt text"></div>
+    <div class="tech-skill">Django<img src="./images/django.png" alt="alt text"></div>
+    <div class="tech-skill">R<img src="./images/r.svg" alt="alt text"></div>
+    <div class="tech-skill">RShiny<img src="./images/rshiny.png" alt="alt text"></div>
+    <div class="tech-skill">C<img src="./images/c.png" alt="alt text"></div>
+</div>
+
+<div class="tech-skill-list">
+    <div class="tech-skill">MariaDB<img src="./images/mariadb.png" alt="alt text"></div>
+    <div class="tech-skill">Postgresql<img src="./images/postgresql.png" alt="alt text"></div>
+    <div class="tech-skill">Postgis<img src="./images/postgis.png" alt="alt text"></div>
+    <div class="tech-skill">Redis<img src="./images/redis.png" alt="alt text"></div>
+</div>
+
 <div class="tech-skill-list">
     <div class="tech-skill">Reactjs<img src="./images/react.png" alt="alt text"></div>
     <div class="tech-skill">Nodejs<img src="./images/nodejs.png" alt="alt text"></div>
@@ -34,8 +50,6 @@ Developing apps using Django, Reactjs and Rshiny among others. Wokring with data
     <div class="tech-skill">HTML<img src="./images/html5.png" alt="alt text"></div>
     <div class="tech-skill">CSS<img src="./images/css3.png" alt="alt text"></div>
 </div>
-
-
 
 
 ## Work experience
@@ -74,7 +88,6 @@ Norwegian
 ## Other interests
 
 reading, running, nature, economics
-
 
 
 <!-- ### Footer
