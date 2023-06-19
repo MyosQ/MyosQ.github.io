@@ -1,9 +1,8 @@
 ---
 layout: post
-title: "Books overview"
+title: "Books I recently read"
+permalink: /books/
 date: 2023-01-01 00:00:00 -0000
-categories: 
-    - Overviews
 ---
 <!-- programatically show all images in folder /images -->
 <!-- set the title to the basename of the each image -->

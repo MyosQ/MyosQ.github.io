@@ -36,6 +36,17 @@ Developing apps using Django, Reactjs and RShiny among others. Working with data
 </div>
 
 <div class="tech-skill-list">
+    <div class="tech-skill">Docker<img src="./images/docker.png" alt="alt text"></div>
+    <div class="tech-skill">NGINX<img src="./images/nginx.png" alt="alt text"></div>
+    <div class="tech-skill">Apache Airflow<img src="./images/airflow.png" alt="alt text"></div>
+    <div class="tech-skill">Apache Kafka<img src="./images/kafka.png" alt="alt text"></div>
+</div>
+
+<div class="tech-skill-list">
+    <div class="tech-skill">Pytorch<img src="./images/pytorch.png" alt="alt text"></div>
+</div>
+
+<div class="tech-skill-list">
     <div class="tech-skill">MariaDB<img src="./images/mariadb.png" alt="alt text"></div>
     <div class="tech-skill">Postgresql<img src="./images/postgresql.png" alt="alt text"></div>
     <div class="tech-skill">Postgis<img src="./images/postgis.png" alt="alt text"></div>
