@@ -193,3 +193,7 @@ strong {
 @media only screen and (max-width: 480px) {
 	make one column somehow...
 }*/
+
+#content {
+	margin-bottom: 100px;
+}

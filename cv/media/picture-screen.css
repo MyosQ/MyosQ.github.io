@@ -32,8 +32,9 @@
     width: 55%;
     padding-left: 10px;
     padding-right: 10px;
-    > img {
-        width: 20px;
-        margin-left: 4px;
-    }
+}
+
+.tech-skill img {
+    width: 20px;
+    margin-left: 4px;
 }

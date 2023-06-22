@@ -16,11 +16,17 @@ Problem solver, Programmer, Engineer
 <a href="https://github.com/MyosQ" target="_blank">Github</a>
 |
 <a href="https://www.linkedin.com/in/frej-sundqvist-b8a49a14b/" target="_blank">LinkedIn</a>
+|
+<a href="mailto:frejsundqvist@protonmail.com" target="_blank">frejsundqvist@protonmail.com</a>
 </div>
 
 <!-- ## Currently
 Working at Capia AS in Tromsø, Norway. -->
 <!-- Developing apps using Django, Reactjs and RShiny among others. Working with databases like MariaDB and Postgres, including postgis. Both directly in SQL and through ORM's. I Deploy apps using docker and nginx as reverse proxy. Experienced at writing dockerfiles, using dockercompose, and some kubernetes. -->
+
+## Me
+A born engineer and problem solver with a genuine interest in Tech, Mathematics and Physics. I love the process of learning new concepts and technologies. My ambition in my career is to continue to learn and to always stay curious. I am also a skilled communicator, with experience leading teams of developers and interacting directly with customers.
+
 
 ## Skills
 
@@ -32,6 +38,7 @@ Working at Capia AS in Tromsø, Norway. -->
     <div class="tech-skill">R<img src="./images/r.svg" alt="alt text"></div>
     <div class="tech-skill">RShiny<img src="./images/rshiny.png" alt="alt text"></div>
     <div class="tech-skill">C<img src="./images/c.png" alt="alt text"></div>
+    <div class="tech-skill">Matlab<img src="./images/matlab.png" alt="alt text"></div>
 </div>
 
 <div class="tech-skill-list">
@@ -61,17 +68,22 @@ Working at Capia AS in Tromsø, Norway. -->
     <div class="tech-skill">CSS<img src="./images/css3.png" alt="alt text"></div>
 </div>
 
+<div class="tech-skill-list">
+    <div class="tech-skill">Git<img src="./images/git.png" alt="alt text"></div>
+    <div class="tech-skill">DevOps<img src="./images/devops.png" alt="alt text"></div>
+    <div class="tech-skill">Linux<img src="./images/linux.png" alt="alt text"></div>
+    <div class="tech-skill">Bash<img src="./images/bash.png" alt="alt text"></div>
+</div>
 
 ## Work experience
 
 `2021 - Present`
 __Capia AS - Fullstack developer, AI engineer and project leader__  
 
-- `-` Working with full techstack  
-- `-` Developing apps using Django, Reactjs and RShiny among others.   
-- `-` Lead a team of developers  
-
-
+- `-` Building apps from scratch to deployment.
+- `-` Fine-tuning Neural Networks for image segmentation and classification.
+- `-` Leading teams of developers and interacting directly with customers.
+- `-` System administering of servers and databases.
 
 ## Education
 
@@ -90,19 +102,11 @@ __Naturvetenskapsprogrammet, Luleå__ ![Alt text](./images/lulea.png){:class="ed
 
 ## Languages
 
-Swedish <!-- ![Alt text](../images/cv/sweden.png){:height="22px" width="auto" style="position:absolute; margin-left:6px;"} -->
-
-English <!-- ![Alt text](../images/cv/uk.png){:height="22px" width="auto" style="position:absolute; margin-left:6px;"} -->
-
-German <!-- ![Alt text](../images/cv/germany.png){:height="22px" width="auto" style="position:absolute; margin-left:6px;"} -->
-
-Norwegian
-<!-- ![Alt text](../images/cv/norway.png){:height="22px" width="auto" style="position:absolute; margin-left:6px;"} -->
+Swedish, English, German, Norwegian
 
 ## Other interests
 
-reading, running, fishing, nature, economics
-
+Reading books, running, fishing, being in nature and playing music.
 
 <!-- ### Footer
 
