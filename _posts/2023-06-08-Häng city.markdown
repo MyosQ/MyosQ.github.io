@@ -1,0 +1,37 @@
+---
+layout: post
+title: "Häng City - Mikael Yvesand"
+shorttitle: "Häng city"
+date: 2023-06-08 00:00:00 -0000
+categories: 
+    - Books I have recently read
+image: hang-city.jpg
+---
+
+![alt text]({{ site.baseurl }}/images/{{ page.image }}){:height="200px" width="133px"}
+
+En härlig skildring av en pojkes tillvaro i åldern ~10 - 13 år i mindre orter som Luleå.
+Man är så spontan och företagsam och alltid på jakt efter action. Det är också en refleksjon över hur plötsligt denna tid kan ta slut.
+
+Jag älskar användingen av "man" istället för "jag". T.ex, "Man såg ju en mås brinna till döds för ett tag sen".
+Det blir mer generellt då. En slags gardering så att man slipper stå till svars.
+Stilen och den vemodiga känslan som läsaren lämnas med påminner om Populärmusik från Vittula av Mikael Niemi.   
+  
+
+<b>Ett par roliga quotes som också säger mycket om bokens stil:</b>
+
+*Jag vill aldrig vara med, alltid ge sken av att jag har nåt annat för mig. Oftast innebär det ju att man blir ensam.*
+
+*I fruktskålen på vardagsrumsbordet ligger en ensam apelsin. Blir den kvar där kommer flugorna ta över. Att äta upp den vore på pappret ett alternativ, men eftersom det är fysiskt omöjligt att öppna en apelsin slår jag bort tanken. Har nån nånsin ätit en apelsin? (...) Med skateboarden i handen tänker jag på vad jag ska göra av apelsinen i magfickan. mitt nuvarande problem i livet.*
+
+*Jag sitter på pakethållaren och styr cykeln som en Harley Davidson sakta genom villagatorna.*
+
+*Davve säger att om man låtsas som att man saltar i sin egen mun så luras hjärnan till att uppleva smaken av salt som smälter på tungan*
+
+*Davve dyker som en vuxen. Jag försöker göra bakåtvolt men satsar bara halvt och landar på rygg.*
+
+*Jag började bära en basker och svor mer än vanligt. (...) ropar "rövkuk" och "fitthora" när frisbeen åker in i vinbärsbuskarna.*
+
+*Det finns ingenting som är så skrämmande, så akut livshotande, som ett gäng bestående av två till fem unga män i åldrarna fjorton till sjutton vid en svensk sjö en sommarkväll.*
+
+*Det knastrar när Davve vrider nacken av fisken. En fisks död är så plågsamt ickebinär att bevittna.*

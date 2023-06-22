@@ -4,7 +4,8 @@ title: "Frihetligt självförsvar - Henrik Jönsson"
 shorttitle: "Frihetligt självförsvar"
 date: 2023-05-27 00:00:00 -0000
 categories: 
-    - Books I recently read
+    - Books I have recently read
+
 image: frihetligt-sjalvforsvar.jpg
 ---
 

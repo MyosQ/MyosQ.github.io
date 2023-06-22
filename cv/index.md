@@ -18,10 +18,9 @@ Problem solver, Programmer, Engineer
 <a href="https://www.linkedin.com/in/frej-sundqvist-b8a49a14b/" target="_blank">LinkedIn</a>
 </div>
 
-## Currently
-
-Fullstack developer and engineer at Capia AS in Tromsø, Norway.
-Developing apps using Django, Reactjs and RShiny among others. Working with databases like MariaDB and Postgres, including postgis. Both directly in SQL and through ORM's. I Deploy apps using docker and nginx as reverse proxy. Experienced at writing dockerfiles, using dockercompose, and some kubernetes.
+<!-- ## Currently
+Working at Capia AS in Tromsø, Norway. -->
+<!-- Developing apps using Django, Reactjs and RShiny among others. Working with databases like MariaDB and Postgres, including postgis. Both directly in SQL and through ORM's. I Deploy apps using docker and nginx as reverse proxy. Experienced at writing dockerfiles, using dockercompose, and some kubernetes. -->
 
 ## Skills
 
@@ -66,8 +65,12 @@ Developing apps using Django, Reactjs and RShiny among others. Working with data
 ## Work experience
 
 `2021 - Present`
-__Capia AS__
-- Fullstack developer and engineer
+__Capia AS - Fullstack developer, AI engineer and project leader__  
+
+- `-` Working with full techstack  
+- `-` Developing apps using Django, Reactjs and RShiny among others.   
+- `-` Lead a team of developers  
+
 
 
 ## Education
@@ -98,7 +101,7 @@ Norwegian
 
 ## Other interests
 
-reading, running, nature, economics
+reading, running, fishing, nature, economics
 
 
 <!-- ### Footer

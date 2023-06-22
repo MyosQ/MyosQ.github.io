@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Books I recently read"
+title: "Books I have recently read"
 permalink: /books/
 date: 2023-01-01 00:00:00 -0000
 ---
@@ -16,7 +16,7 @@ date: 2023-01-01 00:00:00 -0000
 <div style="display: flex; flex-wrap: wrap; justify-content: space-around;">
     <!-- loop through posts, only select those with certain category -->
     {% for post in site.posts %}
-        {% if post.categories contains "Books I recently read" %}
+        {% if post.categories contains "Books I have recently read" %}
             <div style="text-align: center;">
                 <a href="{{ post.url }}">
                     <img src="{{ site.baseurl }}/images/{{ post.image }}" alt="image" height="200"/>

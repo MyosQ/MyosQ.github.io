@@ -4,7 +4,7 @@ title: "Antifragile - Nassim Taleb"
 shorttitle: "Antifragile"
 date: 2023-05-29 00:00:00 -0000
 categories: 
-    - Books I recently read
+    - Books I have recently read
 image: antifragile.jpg
 ---
 
