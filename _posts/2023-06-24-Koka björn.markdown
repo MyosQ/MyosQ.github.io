@@ -1,0 +1,13 @@
+---
+layout: post
+title: "Koka björn - Mikael Niemi"
+shorttitle: "Koka björn"
+date: 2023-06-24 00:00:00 -0000
+categories: 
+    - Books I have recently read
+image: koka-bjorn.png
+---
+
+![alt text]({{ site.baseurl }}/images/{{ page.image }}){:height="200px" width="133px"}
+
+asdf
