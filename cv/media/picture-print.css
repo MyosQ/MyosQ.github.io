@@ -1,3 +1,4 @@
+/* Profile picture */
 #profile_pic {
     font-size: 1em;
     line-height: 2em;
@@ -11,31 +12,33 @@
     width: 5.5em;
 }
 
+/* Education */
 .education-logo {
-    height: 25px;
+    height: 20px;
     width: auto;
     position: absolute;
-    margin-left: 11px;
+    margin-left: 10px;
 }
 
-.tech-skill-list {
-    font-size: 80%;
-    line-height: 2.0em;
+
+/* Skillz */
+#my_skills {
     width: 75%;
     left: 25%;
     position: relative;
+    font-size: 80%;
+}
+.my_skills_row {
+    margin-bottom: 5px;
 }
 .tech-skill {
-    display: inline;
-    margin-bottom: 0.3em;
-    margin-right: 0;
-    padding-left: 0px;
-    padding-right: 25px;
+    margin-right: 20px;
 }
-
 .tech-skill img {
-    width: 20px;
+    height: 18px;
     margin-left: 5px;
+    position: relative;
+    top: 4px;
 }
 
 /* svg imgs. links to github etc */
@@ -66,4 +69,14 @@
 
 .profile_links#euler_link img {
     width: 11px;
+}
+
+/* Languages */
+#languages-screen {
+    display: none;
+}
+
+/* Interest */
+#interests-screen {
+    display: none;
 }

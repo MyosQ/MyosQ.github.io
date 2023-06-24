@@ -12,31 +12,30 @@
 }
 
 .education-logo {
-    height: 25px;
+    height: 20px;
     width: auto;
     position: absolute;
-    margin-left: 11px;
+    margin-left: 10px;
 }
 
 
-.tech-skill-list {
-    font-size: 80%;
-    line-height: 2.0em;
+/* tech skillz */
+#my_skills {
     width: 75%;
     left: 25%;
     position: relative;
 }
-.tech-skill {
-    display: inline;
-    margin-bottom: 0.3em;
-    margin-right: 0;
-    padding-left: 0px;
-    padding-right: 25px;
+.my_skills_row {
+    margin-bottom: 5px;
 }
-
+.tech-skill {
+    margin-right: 20px;
+}
 .tech-skill img {
-    width: 20px;
+    height: 20px;
     margin-left: 5px;
+    position: relative;
+    top: 4px;
 }
 
 /* svg imgs. links to github etc */
@@ -67,4 +66,14 @@
 
 .profile_links#euler_link img {
     width: 19px;
+}
+
+/* Languages */
+#languages-print {
+    display: none;
+}
+
+/* Interest */
+#interests-print {
+    display: none;
 }
