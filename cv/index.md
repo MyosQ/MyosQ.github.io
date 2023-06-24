@@ -17,15 +17,25 @@ Problem solver, Programmer, Engineer
 |
 <a href="https://www.linkedin.com/in/frej-sundqvist-b8a49a14b/" target="_blank">LinkedIn</a>
 |
-<a href="mailto:frejsundqvist@protonmail.com" target="_blank">frejsundqvist@protonmail.com</a>
+<a href="mailto:frejsundqvist@protonmail.com" target="_blank">Mail</a>
 </div>
+
+<!-- <div id="webaddress">
+<a href="myosq.github.io" target="_blank">myosq.github.io</a>
+|
+<a href="github.com/MyosQ" target="_blank">github.com/MyosQ</a>
+|
+<a href="linkedin.com/in/frej-sundqvist-b8a49a14b/" target="_blank">linkedin.com/in/frej-sundqvist-b8a49a14b/</a>
+|
+<a href="mailto:frefrejsundqvist@protonmail.com" target="_blank">frejsundqvist@protonmail.com</a>
+</div> -->
 
 <!-- ## Currently
 Working at Capia AS in Tromsø, Norway. -->
 <!-- Developing apps using Django, Reactjs and RShiny among others. Working with databases like MariaDB and Postgres, including postgis. Both directly in SQL and through ORM's. I Deploy apps using docker and nginx as reverse proxy. Experienced at writing dockerfiles, using dockercompose, and some kubernetes. -->
 
 ## Me
-A born engineer and problem solver with a genuine interest in Tech, Mathematics and Physics. I love the process of learning new concepts and technologies. My ambition in my career is to continue to learn and to always stay curious. I am also a skilled communicator, with experience leading teams of developers and interacting directly with customers.
+A born engineer and problem solver with a genuine interest in Tech, Mathematics and Physics. I love the process of learning new concepts and technologies. My ambition in my career is to continue to learn and to always stay curious. I am also a skilled communicator, with experience in leading teams of developers and interacting directly with customers.
 
 
 ## Skills
@@ -80,10 +90,10 @@ A born engineer and problem solver with a genuine interest in Tech, Mathematics 
 `2021 - Present`
 __Capia AS - Fullstack developer, AI engineer and project leader__  
 
-- `-` Building apps from scratch to deployment.
-- `-` Fine-tuning Neural Networks for image segmentation and classification.
-- `-` Leading teams of developers and interacting directly with customers.
-- `-` System administering of servers and databases.
+- `*` Building apps from scratch to deployment.
+- `*` Fine-tuning Neural Networks for image segmentation and classification.
+- `*` Leading teams of developers and interacting directly with customers.
+- `*` System administering of servers and databases.
 
 ## Education
 

@@ -21,8 +21,7 @@
 
 .tech-skill-list {
     font-size: 80%;
-    line-height: 1.9em;
-    font: inherit;
+    line-height: 2.0em;
     width: 75%;
     left: 25%;
     position: relative;
@@ -31,11 +30,11 @@
     display: inline;
     margin-bottom: 0.3em;
     margin-right: 0;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 0px;
+    padding-right: 25px;
 }
 
 .tech-skill img {
     width: 20px;
-    margin-left: 4px;
+    margin-left: 5px;
 }
