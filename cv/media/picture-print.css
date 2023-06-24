@@ -37,3 +37,33 @@
     width: 20px;
     margin-left: 5px;
 }
+
+/* svg imgs. links to github etc */
+.profile_links img {
+    width: 12px;
+    margin-left: 4px;
+    position: relative;
+    top: 3px;
+}
+
+.profile_links#blog_link img {
+    width: 10px;
+    top: 2px;
+}
+
+.profile_links#github_link img {
+    top: 2px;
+}
+
+.profile_links#email_link img {
+    top: 1px;
+}
+
+.profile_links#linkedin_link img {
+    top: 1px;
+    width: 10px;
+}
+
+.profile_links#euler_link img {
+    width: 11px;
+}

@@ -2,7 +2,6 @@
 layout: cv
 title: CV
 ---
-<!-- ![Alt text]({{ site.baseurl }}/images/frej.jpg) -->
 <div id="profile_pic">
     <img src="{{ site.baseurl }}/cv/images/frej.jpg" alt="alt text">
 </div>
@@ -10,7 +9,9 @@ title: CV
 # Frej Sundqvist
 Problem solver, Programmer, Engineer
 
-<div id="webaddress">
+<!-- plain link -->
+<div class="webaddress" id="webaddress_screen">
+
 <a href="https://myosq.github.io" target="_blank">Blog</a>
 | 
 <a href="https://github.com/MyosQ" target="_blank">Github</a>
@@ -18,21 +19,35 @@ Problem solver, Programmer, Engineer
 <a href="https://www.linkedin.com/in/frej-sundqvist-b8a49a14b/" target="_blank">LinkedIn</a>
 |
 <a href="mailto:frejsundqvist@protonmail.com" target="_blank">Mail</a>
+|
+<a href="https://github.com/MyosQ/euler-solutions" target="_blank">Project&nbsp;Euler</a>
 </div>
 
-<!-- <div id="webaddress">
-<a href="myosq.github.io" target="_blank">myosq.github.io</a>
+<!-- For Print -->
+<div class="webaddress" id="webaddress_print">
+<a href="https://myosq.github.io" target="_blank" class="profile_links" id="blog_link">myosq.github.io<img src="./images/blog.svg" alt="alt text"></a>
+| 
+<a href="https://github.com/MyosQ" target="_blank" class="profile_links" id="github_link">MyosQ<img src="./images/github.svg" alt="alt text"></a>
 |
-<a href="github.com/MyosQ" target="_blank">github.com/MyosQ</a>
-|
-<a href="linkedin.com/in/frej-sundqvist-b8a49a14b/" target="_blank">linkedin.com/in/frej-sundqvist-b8a49a14b/</a>
-|
-<a href="mailto:frefrejsundqvist@protonmail.com" target="_blank">frejsundqvist@protonmail.com</a>
-</div> -->
+<a href="https://www.linkedin.com/in/frej-sundqvist-b8a49a14b/" target="_blank" class="profile_links" id="linkedin_link">frej-sundqvist-b8a49a14b<img src="./images/linkedin.svg" alt="alt text"></a>
 
-<!-- ## Currently
-Working at Capia AS in Tromsø, Norway. -->
-<!-- Developing apps using Django, Reactjs and RShiny among others. Working with databases like MariaDB and Postgres, including postgis. Both directly in SQL and through ORM's. I Deploy apps using docker and nginx as reverse proxy. Experienced at writing dockerfiles, using dockercompose, and some kubernetes. -->
+<br>
+
+<a href="mailto:frejsundqvist@protonmail.com" target="_blank" class="profile_links" id="email_link">frejsundqvist@protonmail.com<img src="./images/email.svg" alt="alt text"></a>
+</div>
+
+<!-- link with svg img -->
+<!-- <div id="webaddress">
+<a href="https://myosq.github.io" target="_blank" class="profile_links" id="blog_link">Blog<img src="./images/blog.svg" alt="alt text"></a>
+| 
+<a href="https://github.com/MyosQ" target="_blank" class="profile_links" id="github_link">Github<img src="./images/github.svg" alt="alt text"></a>
+|
+<a href="https://www.linkedin.com/in/frej-sundqvist-b8a49a14b/" target="_blank" class="profile_links" id="linkedin_link">LinkedIn<img src="./images/linkedin.svg" alt="alt text"></a>
+|
+<a href="mailto:frejsundqvist@protonmail.com" target="_blank" class="profile_links" id="email_link">Mail<img src="./images/email.svg" alt="alt text"></a>
+|
+<a href="https://github.com/MyosQ/euler-solutions" target="_blank" class="profile_links" id="euler_link">Project&nbsp;Euler<img src="./images/projecteuler.png" alt="alt text"></a>
+</div> -->
 
 ## Me
 A born engineer and problem solver with a genuine interest in Tech, Mathematics and Physics. I love the process of learning new concepts and technologies. My ambition in my career is to continue to learn and to always stay curious. I am also a skilled communicator, with experience in leading teams of developers and interacting directly with customers.

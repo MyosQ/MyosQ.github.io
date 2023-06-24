@@ -161,7 +161,7 @@ a:hover {
 	color:#39f
 } 
 
-#webaddress {
+.webaddress {
 	margin-top: 1em;
 	position: relative;
 	left: 25%;
@@ -171,8 +171,13 @@ a:hover {
 	max-width: 500px;
 }
 
-#webaddress a {
+.webaddress a {
 	text-decoration: none;
+}
+
+.webaddress#webaddress_print {
+	display: none;
+	visibility: hidden;
 }
 
 em {

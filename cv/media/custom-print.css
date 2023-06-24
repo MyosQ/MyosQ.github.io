@@ -164,17 +164,22 @@ a:hover {
 	color:#39f
 }
 
-#webaddress {
+.webaddress {
 	margin-top: 1em;
 	position: relative;
 	left: 25%;
 	color: #ccc;
 	font-family: Monaco,Menlo,monospace,sans-serif;
-	font-size: 90%;
+	font-size: 80%;
 }
 
-#webaddress a {
+.webaddress a {
 	text-decoration: none;
+}
+
+#webaddress_screen {
+	display: none;
+	visibility: hidden;
 }
 
 em {
