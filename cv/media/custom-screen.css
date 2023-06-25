@@ -67,6 +67,7 @@ p {
 	margin-bottom: 0.4em;
 	margin-right: 0;
 	width: 55%;
+	max-width: 800px;
 }
 
 code {

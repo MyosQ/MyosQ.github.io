@@ -21,23 +21,39 @@
 
 /* tech skillz */
 #my_skills {
-    width: 75%;
+    width: 70%;
     left: 25%;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start
 }
+
 .my_skills_row {
-    margin-bottom: 5px;
+    display: flex;
+    justify-content: flex-start; /* Distribute the boxes evenly */
+    align-items: center; /* Vertically align boxes */
+    flex-wrap: wrap; /* Allow the boxes to wrap as necessary */
+    margin-bottom: 20px; /* Increase space between rows */
 }
+
 .tech-skill {
-    margin-right: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #333; /* Add border */
+    padding: 6px 10px; /* Add some padding */
+    margin: 5px 10px 5px 0px;
     white-space: nowrap;
+    background-color: #f3f3f3; /* Add a background color */
+    border-radius: 5px; /* Add rounded corners */
 }
-.tech-skill img {
+
+.tech-skill img {   
     height: 20px;
-    margin-left: 5px;
-    position: relative;
-    top: 4px;
+    margin-left: 10px; /* Increase space between the text and the image */
 }
+
 
 /* svg imgs. links to github etc */
 .profile_links img {
