@@ -1,5 +1,10 @@
 body {
     margin-left: 0em;
+    font-size: 80%;
+}
+#content {
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 #profile_pic {
@@ -18,17 +23,75 @@ h1 {
     margin: auto;
     left: 0%;
     width: 90%;
+    padding-left: 8px;
+    padding-right: 8px;
 }
 h1+p{
     text-align: center;
-    margin: auto;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 5px;
+    padding-right: 5px;
     left: 0%;
     width: 90%;
 }
 
+h2{
+   padding-left: 10%;
+   width: 80%;
+   text-align: left;
+   position: static;
+   margin-bottom: 0.3em;
+}
+h2+p{
+    padding-left: 10%;
+    width: 80%;    
+    text-align: left;
+    position: static;
+}
+
+p{
+    padding-left: 10%;
+    width: 80%;
+    text-align: left;
+    position: static;
+    margin-bottom: 0.3em;
+}
+
+p code {
+    display: block;
+    position: static;
+    text-align: left;
+}
+
+#my_skills{
+    width: 80%;
+    position: static;
+    padding-left: 10%;
+    font-size: 70%;
+}
+#my_skills img{
+    height: 1.5em;
+    top: 0.2em;
+}
+#my_skills .tech-skill {
+    margin-right: 10px;
+}
+
+ul {
+    position: static;
+    width: 80%;
+    margin-bottom: 1.5em;
+    margin-top: -0.5em;
+    padding-left: 10%;
+    padding-right: 0%;
+}
+
 .webaddress {
+    padding-left: 5px;
+    padding-right: 5px;
     margin-left: auto;
-    text-align: center;
     margin-right: auto;
+    text-align: center;
     left: 0%;
 }

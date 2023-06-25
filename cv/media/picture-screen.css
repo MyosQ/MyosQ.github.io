@@ -30,6 +30,7 @@
 }
 .tech-skill {
     margin-right: 20px;
+    white-space: nowrap;
 }
 .tech-skill img {
     height: 20px;

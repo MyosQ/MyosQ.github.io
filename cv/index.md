@@ -67,8 +67,8 @@ A born engineer and problem solver with a genuine interest in Tech, Mathematics 
     <div class="my_skills_row">
         <span class="tech-skill">Docker<img src="./images/docker.png" alt="alt text"></span>
         <span class="tech-skill">NGINX<img src="./images/nginx.png" alt="alt text"></span>
-        <span class="tech-skill">Apache Airflow<img src="./images/airflow.png" alt="alt text"></span>
-        <span class="tech-skill">Apache Kafka<img src="./images/kafka.png" alt="alt text"></span>
+        <span class="tech-skill">Apache&nbsp;Airflow<img src="./images/airflow.png" alt="alt text"></span>
+        <span class="tech-skill">Apache&nbsp;Kafka<img src="./images/kafka.png" alt="alt text"></span>
     </div>
     <div class="my_skills_row">
         <span class="tech-skill">Pytorch<img src="./images/pytorch.png" alt="alt text"></span>
