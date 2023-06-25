@@ -6,8 +6,8 @@ title: CV
     <img src="{{ site.baseurl }}/cv/images/frej.jpg" alt="alt text">
 </div>
 
-# Frej Sundqvist
-Problem solver, Programmer, Engineer
+# Frej&nbsp;Sundqvist
+Problem&nbsp;solver,&nbsp;Programmer,&nbsp;Engineer
 
 <!-- plain link -->
 <div class="webaddress" id="webaddress_screen">
