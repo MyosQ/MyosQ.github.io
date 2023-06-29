@@ -56,7 +56,7 @@ def get_prime_partitions(n: int, highest_prime: int = None) -> list:
 It took a while before I found that passing "highest_prime" as an argument would help to avoid duplicates in the list of partitions. Otherwise, the list would contain both [3, 7] and [7, 3] for example. Could be a better way to do this, I am sure. Either way, I think I am getting the hang of partitions now...
 
 Full code is on [Github](https://github.com/MyosQ/euler-solutions){:target="_blank"}.  
-Add me as a friend on Project Euler plz: 1005342_TH9cUZhVx1MYcoOYdgvh3wpvk3APpO5p
+Add me as a friend on Project Euler: 1005342_VlNoiG6CB4zBrjQEOKgaaeprWPUxwNPh
 
 
 
