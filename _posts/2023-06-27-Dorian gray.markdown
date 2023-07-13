@@ -10,4 +10,4 @@ image: dorian-gray.jpg
 
 ![alt text]({{ site.baseurl }}/images/{{ page.image }}){:height="200px" width="133px"}
 
-This was one of those books I didn't enjoy reading much, but certainly left an impression.
+This was one of those books I didn't enjoy reading much, but certainly left an impression and I will remember it.

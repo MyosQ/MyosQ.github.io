@@ -2,7 +2,7 @@
 layout: post
 title: "Koka björn - Mikael Niemi"
 shorttitle: "Koka björn"
-date: 2023-06-24 00:00:00 -0000
+date: 2023-07-13 00:00:00 -0000
 categories: 
     - Books I have recently read
 image: koka-bjorn.png
@@ -10,4 +10,4 @@ image: koka-bjorn.png
 
 ![alt text]({{ site.baseurl }}/images/{{ page.image }}){:height="200px" width="133px"}
 
-asdf
+En av de bästa böcker jag någonsin läst. Jag hade lyssnat på den som ljudbok för länge sedan, men kände att det var dags att läsa den på nytt.
