@@ -1,0 +1,62 @@
+#main {
+    overflow-y: scroll;
+    height: 100vh;
+    scrollbar-color: var(--color-border) var(--color-background);
+    scrollbar-width: thin;
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+    &::-webkit-scrollbar-track {
+        background: var(--color-background);
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: var(--color-border);
+        border-radius: 20px;
+        border: 3px solid var(--color-background);
+    }
+    &::-webkit-scrollbar-thumb:hover {
+        background-color: var(--color-border-hover);
+    }
+}
+
+
+#personal-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .personal-info-text {
+        line-height: 1.6;
+        margin: 1.6rem;
+    }
+
+    .profile-pic-border, .profile-pic-container {
+        aspect-ratio: 1;
+        border-radius: 50%;
+    }
+    .profile-pic-border {
+        --_width: 400px;
+        --_border-width: 4px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: var(--_width);
+        background-color: var(--color-text);
+        box-shadow: var(--circular-shadow);
+        .profile-pic-container {
+            width: calc(var(--_width) - var(--_border-width) * 2);
+            overflow: hidden;
+            img {
+                width: 100%;
+                aspect-ratio: 1;
+                object-fit: cover;
+                object-position: 0 10%;
+            }
+        }
+    }
+}
+
+#timeline {
+    height: 1000px;
+}
