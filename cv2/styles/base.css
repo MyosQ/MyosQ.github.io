@@ -21,8 +21,8 @@
   --color-border-hover: var(--vt-c-divider-dark-1);
   --color-heading: var(--vt-c-text-dark-1);
   --color-text: var(--vt-c-text-dark-2);
-  --section-gap: 160px;
-  --circular-shadow: 0px 3px 12px rgba(255, 255, 255, 0.3);
+  --circular-shadow: 0px 3px 9px rgba(255, 255, 255, 0.25);
+  --min-width-mobile: 310px;
 }
 *,
 *::before,
@@ -44,6 +44,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
 }
+body h1,
+body h2,
+body h3,
+body h4,
+body h5,
+body h6 {
+  color: var(--color-heading);
+}
 a,
 .green {
   text-decoration: none;
@@ -53,12 +61,5 @@ a,
 @media (hover: hover) {
   a:hover {
     background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-@media (min-width: 1024px) {
-  #app {
-    display: block;
-    min-height: 100vh;
-    min-width: 100vw;
   }
 }
