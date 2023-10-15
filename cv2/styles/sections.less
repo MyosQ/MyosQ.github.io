@@ -1,0 +1,79 @@
+#personal-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 25px;
+
+    .personal-info-text {
+        .links {
+            text-align: center;
+        }
+    }
+
+    .profile-pic-border, .profile-pic-container {
+        aspect-ratio: 1;
+        border-radius: 50%;
+    }
+    .profile-pic-border {
+        --_width: var(--min-width-mobile);
+        --_border-width: 4px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: var(--_width);
+        background-color: var(--color-text);
+        box-shadow: var(--circular-shadow);
+        .profile-pic-container {
+            width: calc(var(--_width) - var(--_border-width) * 2);
+            overflow: hidden;
+            img {
+                width: 100%;
+                aspect-ratio: 1;
+                object-fit: cover;
+                object-position: 0 10%;
+            }
+        }
+    }
+}
+
+#timeline {
+    display: flex;
+    flex-direction: column;
+
+    .timeline-event {
+        min-height: 200px;
+        display: flex;      
+        .timeline-event-indicator {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            width: 10%;
+            min-width: 50px;
+            height: 100%;
+
+            .timeline-event-indicator-icon {
+                width: 100%;
+                aspect-ratio: 1 !important;
+                // text-align: center;
+                // margin-top: 10px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .timeline-event-indicator-line {
+                background: linear-gradient(#abb4ff, #5c5faf, #5f6075);
+                transition-delay: 500ms;
+                width: 2px;
+                height: 100%;
+            }
+        }
+    }
+    .timeline-event-content {
+        padding-bottom: 20px;
+    }
+}
+
+#skills {
+    min-height: 2000px;
+}

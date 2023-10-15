@@ -17,6 +17,8 @@
     <link rel="icon" href="assets/favicon.ico">
     <link rel="stylesheet" href="styles/base.css">
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/sections.css">
+    <link rel="stylesheet" href="styles/animations.css">
     <script src="scripts/main.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Frej Sundqvist</title>
@@ -46,24 +48,31 @@
                     data-aos="fade-left"
                     data-aos-duration="700"
                     data-aos-delay="600">
-                    <a href="URL_TO_GITHUB">Github</a> |
-                    <a href="URL_TO_LINKEDIN">LinkedIn</a> |
-                    <a href="URL_TO_MAIL">Mail</a> |
-                    <a href="URL_TO_PROJECT_EULER">Project Euler</a>
+                    <a class="animate-underline" href="URL_TO_GITHUB">Github</a> |
+                    <a class="animate-underline" href="URL_TO_LINKEDIN">LinkedIn</a> |
+                    <a class="animate-underline" href="URL_TO_MAIL">Mail</a> |
+                    <a class="animate-underline" href="URL_TO_PROJECT_EULER">Project Euler</a>
                 </div>
             </div>
         </div>
 
+        <!-- Who am I - text -->
+        <div id="who-am-i" class="section">
+            <p>
+                A born engineer and problem solver with a genuine interest in Tech, Mathematics and Physics. I love the process of learning new concepts and technologies. My ambition is to continue to learn and to always stay curious. I am also a skilled communicator, with experience in leading teams of developers and interacting directly with customers.
+            </p>
+        </div>
+
         <!-- Timeline -->
-        <div id="timeline">
-            <div id="education" class="timeline-event"
-                data-aos="fade-in"
-                data-aos-duration="200">
+        <div id="timeline" class="section slide-left">
+            
+            <!-- education -->
+            <div id="education" class="timeline-event">
                 <div class="timeline-event-indicator">
                     <div class="timeline-event-indicator-icon">
                         <i class="fa fa-book"></i>
                     </div>
-                    <div class="timeline-event-indicator-line"></div>
+                    <div class="timeline-event-indicator-line scale-y"></div>
                 </div>
                 <div class="timeline-event-content">
                     <h2>Education</h2>
@@ -71,12 +80,45 @@
                         <h3>Master's degree in Engineering Physics</h3>
                         <ul>
                             <li>Umeå University, Sweden</li>
-                            <li>Julius-Maximilians-Universität Würzburg</li>
+                            <li>Julius-Maximilians-Universität, Würzburg</li>
                         </ul>
                         <p>2015 - 2021</p>
                     </div>
                 </div>
             </div>
+
+            <!-- Work 1 -->
+            <div id="education" class="timeline-event">
+                <div class="timeline-event-indicator">
+                    <div class="timeline-event-indicator-icon">
+                        <i class="fa fa-terminal"></i>
+                    </div>
+                    <div class="timeline-event-indicator-line"></div>
+                </div>
+                <div class="timeline-event-content">
+                    <h2>Capia</h2>
+                    <div class="timeline-event-content-text">
+                        <h3>Fullstack developer, AI engineer and project leader</h3>
+                        <ul>
+                            <li>Building apps from scratch to deployment.</li>
+                            <li>Fine-tuning Neural Networks for image segmentation and classification.</li>
+                            <li>Leading teams of developers and interacting directly with customers.</li>
+                            <li>System administering of servers and databases.</li>
+                        </ul>
+                        <p>2021 - present</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Skills -->
+        <div id="skills" class="section">
+            <div id="languages" class="skills-class">
+                <!-- My go to languages are: Python, Js -->
+            </div>
+            <div id="frame-works" class="skills-class"></div>
+            <div id="databases" class="skills-class"></div>
+            <div id="other" class="skills-class"></div>
         </div>
     </div>
   </body>

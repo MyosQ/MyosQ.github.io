@@ -1,4 +1,5 @@
 #main {
+  margin-top: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -22,69 +23,6 @@
 #main::-webkit-scrollbar-thumb:hover {
   background-color: var(--color-border-hover);
 }
-#personal-info {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 25px;
-}
-#personal-info .personal-info-text .links {
-  text-align: center;
-}
-#personal-info .profile-pic-border,
-#personal-info .profile-pic-container {
-  aspect-ratio: 1;
-  border-radius: 50%;
-}
-#personal-info .profile-pic-border {
-  --_width: var(--min-width-mobile);
-  --_border-width: 4px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: var(--_width);
-  background-color: var(--color-text);
-  box-shadow: var(--circular-shadow);
-}
-#personal-info .profile-pic-border .profile-pic-container {
-  width: calc(var(--_width) - var(--_border-width) * 2);
-  overflow: hidden;
-}
-#personal-info .profile-pic-border .profile-pic-container img {
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: cover;
-  object-position: 0 10%;
-}
-#timeline {
-  display: flex;
-  flex-direction: column;
+.section {
   width: clamp(var(--min-width-mobile), 90%, 700px);
-}
-#timeline .timeline-event {
-  border: 2px solid var(--color-border);
-  min-height: 250px;
-  display: flex;
-  padding-top: 20px;
-  padding-bottom: 20px;
-}
-#timeline .timeline-event .timeline-event-indicator {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  width: clamp(60px, 9%, 100px);
-  height: 100%;
-}
-#timeline .timeline-event .timeline-event-indicator .timeline-event-indicator-icon {
-  width: 100%;
-  aspect-ratio: 1 !important;
-  text-align: center;
-  margin-top: 10px;
-}
-#timeline .timeline-event .timeline-event-indicator .timeline-event-indicator-line {
-  background: linear-gradient(#abb4ff, #797ef9, var(--color-border));
-  transition-delay: 500ms;
-  width: 2px;
-  height: 100%;
 }
