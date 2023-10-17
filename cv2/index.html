@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="description" content="Behold My Awesome Project!" />
     <meta name="author" content="Frej" />
+    <link rel="icon" href="assets/favicon.ico">
     <!-- AOS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -14,11 +15,14 @@
     <!-- font awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
 
-    <link rel="icon" href="assets/favicon.ico">
+    <!-- CSS -->
     <link rel="stylesheet" href="styles/base.css">
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/sections.css">
     <link rel="stylesheet" href="styles/animations.css">
+
+    <!-- JS -->
+    <script src="scripts/base.js"></script>
     <script src="scripts/main.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Frej Sundqvist</title>
@@ -57,14 +61,14 @@
         </div>
 
         <!-- Who am I - text -->
-        <div id="who-am-i" class="section">
+        <div id="who-am-i" class="section slide-left delay-1">
             <p>
                 A born engineer and problem solver with a genuine interest in Tech, Mathematics and Physics. I love the process of learning new concepts and technologies. My ambition is to continue to learn and to always stay curious. I am also a skilled communicator, with experience in leading teams of developers and interacting directly with customers.
             </p>
         </div>
 
         <!-- Timeline -->
-        <div id="timeline" class="section slide-left">
+        <div id="timeline" class="section slide-left delay-2">
             
             <!-- education -->
             <div id="education" class="timeline-event">
@@ -72,7 +76,7 @@
                     <div class="timeline-event-indicator-icon">
                         <i class="fa fa-book"></i>
                     </div>
-                    <div class="timeline-event-indicator-line scale-y"></div>
+                    <div class="timeline-event-indicator-line scale-y delay-2-1"></div>
                 </div>
                 <div class="timeline-event-content">
                     <h2>Education</h2>
@@ -88,12 +92,14 @@
             </div>
 
             <!-- Work 1 -->
-            <div id="education" class="timeline-event">
+            <div id="education" class="timeline-event current">
                 <div class="timeline-event-indicator">
-                    <div class="timeline-event-indicator-icon">
-                        <i class="fa fa-terminal"></i>
+                    <div class="timeline-event-indicator-icon fade-in delay-2-2">
+                        <div>
+                            <i class="fa fa-terminal"></i>
+                        </div>
                     </div>
-                    <div class="timeline-event-indicator-line"></div>
+                    <div class="timeline-event-indicator-line scale-y delay-2-3"></div>
                 </div>
                 <div class="timeline-event-content">
                     <h2>Capia</h2>
@@ -113,9 +119,107 @@
 
         <!-- Skills -->
         <div id="skills" class="section">
-            <div id="languages" class="skills-class">
-                <!-- My go to languages are: Python, Js -->
+            <div class="skill-class">
+                <div class="skill">
+                    <p>Python</p>
+                    <img src="assets/python.svg" alt="python">
+                </div>
             </div>
+
+            <div class="skill-class">
+                <div class="skill">
+                    <p>Pytorch</p>
+                    <img src="assets/pytorch.svg" alt="pytorch">
+                </div>
+                <div class="skill">
+                    <p>Numpy</p>
+                    <img src="assets/pytorch.svg" alt="pytorch">
+                </div>
+                <div class="skill">
+                    <p>Pandas</p>
+                    <img src="assets/pytorch.svg" alt="pytorch">
+                </div>
+                <div class="skill">
+                    <p>Django</p>
+                    <img src="assets/pytorch.svg" alt="pytorch">
+                </div>
+                <div class="skill">
+                    <p>Airflow</p>
+                    <img src="assets/pytorch.svg" alt="pytorch">
+                </div>
+            </div>
+
+            <div class="skill-class">
+                <div class="skill">
+                    <p>C</p>
+                    <img src="assets/pytorch.svg" alt="pytorch">
+                </div>
+                <div class="skill">
+                    <p>R</p>
+                    <img src="assets/pytorch.svg" alt="pytorch">
+                </div>
+                <div class="skill">
+                    <p>Matlab</p>
+                    <img src="assets/pytorch.svg" alt="pytorch">
+                </div>
+                <div class="skill">
+                    <p>Javascript</p>
+                    <img src="assets/pytorch.svg" alt="pytorch">
+                </div>
+            </div>
+
+            
+            <div class="skill-class">
+                <div class="skill">
+                    <p>MariaDB</p>
+                    <img src="assets/pytorch.svg" alt="pytorch">
+                </div>
+                <div class="skill">
+                    <p>Postgres</p>
+                    <img src="assets/pytorch.svg" alt="pytorch">
+                </div>
+                <div class="skill">
+                    <p>PostGis</p>
+                    <img src="assets/pytorch.svg" alt="pytorch">
+                </div>
+                <div class="skill">
+                    <p>Redis</p>
+                    <img src="assets/pytorch.svg" alt="pytorch">
+                </div>
+            </div>
+
+            <div class="skill-class">
+                <div class="skill">
+                    <p>Git</p>
+                    <img src="assets/pytorch.svg" alt="pytorch">
+                </div>
+                <div class="skill">
+                    <p>Docker</p>
+                    <img src="assets/pytorch.svg" alt="pytorch">
+                </div>
+                <div class="skill">
+                    <p>Bash</p>
+                    <img src="assets/pytorch.svg" alt="pytorch">
+                </div>
+                <div class="skill">
+                    <p>Nginx</p>
+                    <img src="assets/pytorch.svg" alt="pytorch">
+                </div>
+                <div class="skill">
+                    <p>Apache Kafka</p>
+                    <img src="assets/pytorch.svg" alt="pytorch">
+                </div>
+                <div class="skill">
+                    <p>ReactJs</p>
+                    <img src="assets/pytorch.svg" alt="pytorch">
+                </div>
+                <div class="skill">
+                    <p>NodeJS</p>
+                    <img src="assets/pytorch.svg" alt="pytorch">
+                </div>
+            </div>
+
+        </div>
             <div id="frame-works" class="skills-class"></div>
             <div id="databases" class="skills-class"></div>
             <div id="other" class="skills-class"></div>

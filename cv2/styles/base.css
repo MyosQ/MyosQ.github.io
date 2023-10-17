@@ -23,6 +23,13 @@
   --color-text: var(--vt-c-text-dark-2);
   --circular-shadow: 0px 3px 9px rgba(255, 255, 255, 0.25);
   --min-width-mobile: 310px;
+  --white-soft: var(--vt-c-white-soft);
+  --white: var(--vt-c-white);
+  --primary: #00BD7E;
+  --secondary: #375FAE;
+  --tertiary: #9E7070;
+  --mouse-x: 0;
+  --mouse-y: 0;
 }
 *,
 *::before,
@@ -52,11 +59,9 @@ body h5,
 body h6 {
   color: var(--color-heading);
 }
-a,
-.green {
+a {
   text-decoration: none;
-  color: hsl(160, 100%, 37%);
-  transition: 0.4s;
+  color: var(--primary);
 }
 a.animate-underline {
   position: relative;

@@ -38,6 +38,9 @@
 }
 
 #timeline {
+    --current-event-box-shadow: 
+                        0 0 28px 20px var(--white),
+                        0 0 50px 31px var(--secondary);
     display: flex;
     flex-direction: column;
 
@@ -55,25 +58,90 @@
             .timeline-event-indicator-icon {
                 width: 100%;
                 aspect-ratio: 1 !important;
-                // text-align: center;
-                // margin-top: 10px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
             }
             .timeline-event-indicator-line {
-                background: linear-gradient(#abb4ff, #5c5faf, #5f6075);
-                transition-delay: 500ms;
+                background: linear-gradient(var(--primary), var(--tertiary), var(--secondary));
                 width: 2px;
                 height: 100%;
             }
         }
+
+        &.current {
+            .timeline-event-indicator-icon {
+                > div {
+                    border-radius: 50%;
+                    box-shadow: var(--current-event-box-shadow);
+                    position: relative;
+                    animation: animateShadow 2s infinite alternate;
+                    i {
+                        color: var(--color-background);
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                    }
+                }
+            }
+        }
+        .timeline-event-content {
+            padding-bottom: 20px;
+        }
     }
-    .timeline-event-content {
-        padding-bottom: 20px;
+    
+
+    @keyframes animateShadow {
+        0% {
+            box-shadow: var(--current-event-box-shadow);
+        }
+        100% {
+            box-shadow: var(--current-event-box-shadow);
+        }
     }
 }
 
 #skills {
     min-height: 2000px;
+    padding-top: 40px;
+    display: flex;
+    flex-direction: column;
+
+    .skill-class {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+
+        .skill {
+            width: clamp(125px, 20vw, 150px);
+            aspect-ratio: 3;
+
+            background-color: var(--color-background-mute);
+            border-radius: 4px;
+            border: 2px solid var(--color-border);
+            color: var(--color-heading);
+            display: flex;
+            padding: 10px 17px;
+            align-items: center;
+            justify-content: center;
+            transition: border 0.1s ease-in-out;
+
+            &:hover {
+                border: 2px solid var(--color-border-hover);
+            }
+
+            p, img {
+                pointer-events: none;
+            }
+            p {
+                margin-right: 10px;
+            }
+            img {
+                height: 1.25rem;
+            }
+        }
+    }
 }
+
+

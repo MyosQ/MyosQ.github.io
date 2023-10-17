@@ -1,5 +1,5 @@
 function intersectionObservers() {
-    const sections = document.querySelectorAll('.slide-left, .scale-y');
+    const sections = document.querySelectorAll('.slide-left, .scale-y, .fade-in');
     const options = {
         root: null,
         threshold: 1.0,
