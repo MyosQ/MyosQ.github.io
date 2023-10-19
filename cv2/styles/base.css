@@ -66,7 +66,7 @@ a {
 a.animate-underline {
   position: relative;
 }
-a.animate-underline:after {
+a.animate-underline::after {
   position: absolute;
   bottom: -0.15em;
   left: 0;

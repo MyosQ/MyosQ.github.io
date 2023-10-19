@@ -20,7 +20,7 @@
   justify-content: center;
   align-items: center;
   width: var(--_width);
-  background-color: var(--color-text);
+  background-color: #000;
   box-shadow: var(--circular-shadow);
 }
 #personal-info .profile-pic-border .profile-pic-container {
@@ -92,13 +92,23 @@
   padding-top: 40px;
   display: flex;
   flex-direction: column;
+  gap: 50px;
 }
 #skills .skill-class {
+  padding-bottom: 10px;
+  padding-top: 10px;
+  border-bottom: 2px solid var(--color-border);
+  box-shadow: 0 10px 10px -10px var(--color-border);
+}
+#skills .skill-class .skill-class-text {
+  padding-bottom: 30px;
+}
+#skills .skill-class .skill-class-skills {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
 }
-#skills .skill-class .skill {
+#skills .skill-class .skill-class-skills .skill {
   width: clamp(125px, 20vw, 150px);
   aspect-ratio: 3;
   background-color: var(--color-background-mute);
@@ -111,16 +121,38 @@
   justify-content: center;
   transition: border 0.1s ease-in-out;
 }
-#skills .skill-class .skill:hover {
+#skills .skill-class .skill-class-skills .skill:hover {
   border: 2px solid var(--color-border-hover);
 }
-#skills .skill-class .skill p,
-#skills .skill-class .skill img {
+#skills .skill-class .skill-class-skills .skill p,
+#skills .skill-class .skill-class-skills .skill img {
   pointer-events: none;
 }
-#skills .skill-class .skill p {
+#skills .skill-class .skill-class-skills .skill p {
   margin-right: 10px;
 }
-#skills .skill-class .skill img {
+#skills .skill-class .skill-class-skills .skill img {
   height: 1.25rem;
+}
+@media (min-width: 768px) {
+  #skills .skill-class {
+    position: relative;
+    --side-bars-margin: -25px;
+  }
+  #skills .skill-class::before,
+  #skills .skill-class::after {
+    content: "";
+    position: absolute;
+    height: 100%;
+    width: 2px;
+    background-color: var(--color-border);
+  }
+  #skills .skill-class::before {
+    left: var(--side-bars-margin);
+    top: 0;
+  }
+  #skills .skill-class::after {
+    right: var(--side-bars-margin);
+    top: 0;
+  }
 }
