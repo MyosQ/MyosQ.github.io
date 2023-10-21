@@ -1,11 +1,9 @@
 :root {
-  --global-delay: 0s;
-  --delay-1: var(--global-delay, 0.5s);
-  --delay-2: var(--global-delay, 1s);
-  --delay-2-1: var(--global-delay, 0.3s);
-  --delay-2-2: var(--global-delay, 0.4s);
-  --delay-2-3: var(--global-delay, 0.9s);
-  --delay-3: var(--global-delay, 1.5s);
+  --delay-1: var(--global-delay, 0.4s);
+  --delay-2: var(--global-delay, 0.8s);
+  --delay-2-1: var(--global-delay, 0.2s);
+  --delay-2-2: var(--global-delay, 0.35s);
+  --delay-2-3: var(--global-delay, 0.7s);
 }
 .scale-y {
   transition: transform 0.3s ease-in-out;

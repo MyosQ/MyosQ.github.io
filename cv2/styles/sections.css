@@ -91,36 +91,38 @@
   display: flex;
 }
 #skills .tabs .tab-button {
-  padding: 10px;
+  color: var(--color-heading);
+  padding: 5px 10px;
   cursor: pointer;
 }
-#skills .skill-class-wrapper {
+#skills #skill-class-wrapper {
   position: relative;
   overflow-x: hidden;
-  width: 100%;
-  height: 700px;
 }
-#skills .skill-class-wrapper .skill-class-wrapper2 {
+#skills #skill-class-wrapper #skill-classes-all {
+  --num-skill-classes: 4;
+  width: calc(100% * var(--num-skill-classes));
   display: flex;
   position: absolute;
-  left: -250px;
+  left: 0px;
+  transition: left 0.3s ease-in-out;
 }
-#skills .skill-class-wrapper .skill-class {
-  width: 700px;
+#skills #skill-class-wrapper #skill-classes-all .skill-class {
   padding-bottom: 10px;
   padding-top: 10px;
-  border-bottom: 2px solid var(--color-border);
   box-shadow: 0 10px 10px -10px var(--color-border);
+  opacity: 0;
+  transition: opacity 0.45s ease-in-out;
 }
-#skills .skill-class-wrapper .skill-class .skill-class-text {
+#skills #skill-class-wrapper #skill-classes-all .skill-class .skill-class-text {
   padding-bottom: 30px;
 }
-#skills .skill-class-wrapper .skill-class .skill-class-skills {
+#skills #skill-class-wrapper #skill-classes-all .skill-class .skill-class-skills {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
 }
-#skills .skill-class-wrapper .skill-class .skill-class-skills .skill {
+#skills #skill-class-wrapper #skill-classes-all .skill-class .skill-class-skills .skill {
   width: clamp(125px, 20vw, 150px);
   aspect-ratio: 3;
   background-color: var(--color-background-mute);
@@ -133,16 +135,19 @@
   justify-content: center;
   transition: border 0.1s ease-in-out;
 }
-#skills .skill-class-wrapper .skill-class .skill-class-skills .skill:hover {
+#skills #skill-class-wrapper #skill-classes-all .skill-class .skill-class-skills .skill:hover {
   border: 2px solid var(--color-border-hover);
 }
-#skills .skill-class-wrapper .skill-class .skill-class-skills .skill p,
-#skills .skill-class-wrapper .skill-class .skill-class-skills .skill img {
+#skills #skill-class-wrapper #skill-classes-all .skill-class .skill-class-skills .skill p,
+#skills #skill-class-wrapper #skill-classes-all .skill-class .skill-class-skills .skill img {
   pointer-events: none;
 }
-#skills .skill-class-wrapper .skill-class .skill-class-skills .skill p {
+#skills #skill-class-wrapper #skill-classes-all .skill-class .skill-class-skills .skill p {
   margin-right: 10px;
 }
-#skills .skill-class-wrapper .skill-class .skill-class-skills .skill img {
+#skills #skill-class-wrapper #skill-classes-all .skill-class .skill-class-skills .skill img {
   height: 1.25rem;
+}
+#skills #skill-class-wrapper #skill-classes-all .skill-class.active {
+  opacity: 1;
 }

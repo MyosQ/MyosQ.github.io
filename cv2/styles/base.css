@@ -63,10 +63,10 @@ a {
   text-decoration: none;
   color: var(--primary);
 }
-a.animate-underline {
+.animate-underline {
   position: relative;
 }
-a.animate-underline::after {
+.animate-underline::after {
   position: absolute;
   bottom: -0.15em;
   left: 0;
@@ -79,6 +79,9 @@ a.animate-underline::after {
   transform-origin: 0 0;
   transition: transform 0.2s ease-in-out;
 }
-a.animate-underline:hover::after {
+.animate-underline:hover::after {
+  transform: scaleX(1);
+}
+.animate-underline.active::after {
   transform: scaleX(1);
 }

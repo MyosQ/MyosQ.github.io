@@ -87,7 +87,7 @@ a {
   color: var(--primary);
 }
 
-a.animate-underline {
+.animate-underline {
   position: relative;
   &::after {
     position: absolute;
@@ -103,6 +103,9 @@ a.animate-underline {
     transition: transform 0.2s ease-in-out;
   }
   &:hover::after {
+    transform: scaleX(1);
+  }
+  &.active::after {
     transform: scaleX(1);
   }
 }
