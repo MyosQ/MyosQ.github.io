@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Behold My Awesome Project!" />
+    <meta name="author" content="Frej" />
+    <link rel="icon" href="assets/favicon.ico">
+    <!-- AOS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/sections.css">
+    <link rel="stylesheet" href="styles/animations.css">
+
+    <!-- JS -->
+    <script src="scripts/base.js"></script>
+    <script src="scripts/main.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frej Sundqvist</title>
+  </head>
+  <body>
+    <div id="main">
+
+        <!-- Personal info -->
+        <div id="personal-info">
+            <div class="profile-pic-border"
+                data-aos="fade-up"
+                data-aos-duration="1000">
+                <div class="profile-pic-container">
+                    <img src="assets/profile_pic.jpg" alt="profile_pic">
+                </div>
+            </div>
+            <div class="personal-info-text">
+                <h1 data-aos="fade-left"
+                    data-aos-duration="700"
+                    data-aos-delay="200">
+                    Me - Frej Sundqvist</h1>
+                <p data-aos="fade-left"
+                    data-aos-duration="700"
+                    data-aos-delay="400">
+                    Problem solver, Programmer, Engineer</p>
+                <div class="links"
+                    data-aos="fade-left"
+                    data-aos-duration="700"
+                    data-aos-delay="600">
+                    <a class="animate-underline" href="URL_TO_GITHUB">Github</a> |
+                    <a class="animate-underline" href="URL_TO_LINKEDIN">LinkedIn</a> |
+                    <a class="animate-underline" href="URL_TO_MAIL">Mail</a> |
+                    <a class="animate-underline" href="URL_TO_PROJECT_EULER">Project Euler</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Who am I - text -->
+        <div id="who-am-i" class="section slide-left delay-1">
+            <p>
+                A born engineer and problem solver with a genuine interest in Tech, Mathematics and Physics. I love the process of learning new concepts and technologies. My ambition is to continue to learn and to always stay curious. I am also a skilled communicator, with experience in leading teams of developers and interacting directly with customers.
+            </p>
+        </div>
+
+        <!-- Timeline -->
+        <div id="timeline" class="section slide-left delay-2">
+            
+            <!-- education -->
+            <div id="education" class="timeline-event">
+                <div class="timeline-event-indicator">
+                    <div class="timeline-event-indicator-icon">
+                        <i class="fa fa-book"></i>
+                    </div>
+                    <div class="timeline-event-indicator-line scale-y delay-2-1"></div>
+                </div>
+                <div class="timeline-event-content">
+                    <h2>Education</h2>
+                    <div class="timeline-event-content-text">
+                        <h3>Master's degree in Engineering Physics</h3>
+                        <ul>
+                            <li>Umeå University, Sweden</li>
+                            <li>Julius-Maximilians-Universität, Würzburg</li>
+                        </ul>
+                        <p>2015 - 2021</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Work 1 -->
+            <div id="education" class="timeline-event current">
+                <div class="timeline-event-indicator">
+                    <div class="timeline-event-indicator-icon fade-in delay-2-2">
+                        <div>
+                            <i class="fa fa-terminal"></i>
+                        </div>
+                    </div>
+                    <div class="timeline-event-indicator-line scale-y delay-2-3"></div>
+                </div>
+                <div class="timeline-event-content">
+                    <h2>Capia</h2>
+                    <div class="timeline-event-content-text">
+                        <h3>Fullstack developer, AI engineer and project leader</h3>
+                        <ul>
+                            <li>Building apps from scratch to deployment.</li>
+                            <li>Fine-tuning Neural Networks for image segmentation and classification.</li>
+                            <li>Leading teams of developers and interacting directly with customers.</li>
+                            <li>System administering of servers and databases.</li>
+                        </ul>
+                        <p>2021 - present</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Skills -->
+        <!-- https://worldvectorlogo.com/logo/svg -->
+        <div id="skills" class="section fade-in">
+            <h2>Skills</h2>
+
+            <div class="tabs">
+                <div class="tab-button animate-underline active" data-skill-class-id="python">Python</div>
+                <div class="tab-button animate-underline" data-skill-class-id="databases">Databases</div>
+                <div class="tab-button animate-underline" data-skill-class-id="devops">DevOps</div>
+                <div class="tab-button animate-underline" data-skill-class-id="other">Other</div>
+            </div>
+
+            <div id="skill-class-wrapper">
+                <div id="skill-classes-all">
+                    <div class="skill-class active" id="python">
+                        <div class="skill-class-text">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+                        </div>
+
+                        <div class="skill-class-skills" id="go-to-language">
+                            <div class="skill">
+                                <p>Python</p>
+                                <img src="assets/python.svg" alt="python">
+                            </div>
+                            <div class="skill">
+                                <p>Javascript</p>
+                                <img src="assets/javascript.svg" alt="javascript">
+                            </div>
+                            <div class="skill sub-skill">
+                                <p>Pytorch</p>
+                                <img src="assets/pytorch.svg" alt="pytorch">
+                            </div>
+                            <div class="skill sub-skill">
+                                <p>Numpy</p>
+                                <img src="assets/numpy.svg" alt="numpy">
+                            </div>
+                            <div class="skill sub-skill">
+                                <p>Pandas</p>
+                                <img src="assets/pandas.svg" alt="pandas">
+                            </div>
+                            <div class="skill sub-skill">
+                                <p>Django</p>
+                                <img src="assets/django.svg" alt="django">
+                            </div>
+                            <div class="skill sub-skill">
+                                <p>Airflow</p>
+                                <img src="assets/airflow.svg" alt="airflow">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="skill-class" id="databases">
+                        <div class="skill-class-text">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+                        </div>
+                        <div class="skill-class-skills">
+                            <div class="skill">
+                                <p>MariaDB</p>
+                                <img src="assets/mariadb.svg" alt="mariadb">
+                            </div>
+                            <div class="skill">
+                                <p>Postgres</p>
+                                <img src="assets/postgresql.svg" alt="postgresql">
+                            </div>
+                            <!--
+                                <div class="skill">
+                                    <p>PostGis</p>
+                                    <img src="assets/postgis.svg" alt="postgis">
+                                </div>
+                            -->
+                            <div class="skill">
+                                <p>Redis</p>
+                                <img src="assets/redis.svg" alt="redis">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="skill-class" id="devops">
+                        <div class="skill-class-text">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+                        </div>
+                        <div class="skill-class-skills">
+                            <div class="skill">
+                                <p>Git</p>
+                                <img src="assets/git.svg" alt="git">
+                            </div>
+                            <div class="skill">
+                                <p>Docker</p>
+                                <img src="assets/docker.svg" alt="docker">
+                            </div>
+                            <div class="skill">
+                                <p>Bash</p>
+                                <img src="assets/bash.svg" alt="bash">
+                            </div>
+                            <div class="skill">
+                                <p>Nginx</p>
+                                <img src="assets/nginx.svg" alt="nginx">
+                            </div>
+                        </div>
+                    </div>
+
+
+                    
+                    <div class="skill-class" id="other">
+                        <div class="skill-class-text">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+                        </div>
+                        <div class="skill-class-skills">
+                            <div class="skill">
+                                <p>C</p>
+                                <img src="assets/c.svg" alt="C">
+                            </div>
+                            <div class="skill">
+                                <p>R</p>
+                                <img src="assets/r.svg" alt="R">
+                            </div>
+                            <div class="skill">
+                                <p>Matlab</p>
+                                <img src="assets/matlab.svg" alt="matlab">
+                            </div>
+                            <div class="skill">
+                                <p>React</p>
+                                <img src="assets/reactjs.svg" alt="reactjs">
+                            </div>
+                            <div class="skill">
+                                <p>NodeJS</p>
+                                <img src="assets/nodejs.svg" alt="nodejs">
+                            </div>
+                            <div class="skill">
+                                <p>Kafka</p>
+                                <img src="assets/kafka.svg" alt="kafka">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Languages -->
+        <div id="other" class="section fade-in">
+            <h2>Other</h2>
+            <div id="languages">
+                <h4>Interests</h4>
+                <p>Finance, Economics...</p>
+                <h4>I speak</h4>
+                <ul>
+                    <li>Swedish</li>
+                    <li>Norwegian</li>
+                    <li>English</li>
+                    <li>German</li>
+                </ul>
+            </div>
+        </div>
+
+        <div style="margin-bottom:300px;"></div>
+    </div>
+  </body>
+</html>

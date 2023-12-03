@@ -1,0 +1,153 @@
+#personal-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 25px;
+}
+#personal-info .personal-info-text .links {
+  text-align: center;
+}
+#personal-info .profile-pic-border,
+#personal-info .profile-pic-container {
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+#personal-info .profile-pic-border {
+  --_width: var(--min-width-mobile);
+  --_border-width: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: var(--_width);
+  background-color: #000;
+  box-shadow: var(--circular-shadow);
+}
+#personal-info .profile-pic-border .profile-pic-container {
+  width: calc(var(--_width) - var(--_border-width) * 2);
+  overflow: hidden;
+}
+#personal-info .profile-pic-border .profile-pic-container img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  object-position: 0 10%;
+}
+#timeline {
+  --current-event-box-shadow: 0 0 28px 20px var(--white),
+                        0 0 50px 31px var(--secondary);
+  display: flex;
+  flex-direction: column;
+}
+#timeline .timeline-event {
+  min-height: 200px;
+  display: flex;
+}
+#timeline .timeline-event .timeline-event-indicator {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 10%;
+  min-width: 50px;
+  height: 100%;
+}
+#timeline .timeline-event .timeline-event-indicator .timeline-event-indicator-icon {
+  width: 100%;
+  aspect-ratio: 1 !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#timeline .timeline-event .timeline-event-indicator .timeline-event-indicator-line {
+  background: linear-gradient(var(--primary), var(--tertiary), var(--secondary));
+  width: 2px;
+  height: 100%;
+}
+#timeline .timeline-event.current .timeline-event-indicator-icon > div {
+  border-radius: 50%;
+  box-shadow: var(--current-event-box-shadow);
+  position: relative;
+  animation: animateShadow 2s infinite alternate;
+}
+#timeline .timeline-event.current .timeline-event-indicator-icon > div i {
+  color: var(--color-background);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+#timeline .timeline-event .timeline-event-content {
+  padding-bottom: 20px;
+}
+@keyframes animateShadow {
+  0% {
+    box-shadow: var(--current-event-box-shadow);
+  }
+  100% {
+    box-shadow: var(--current-event-box-shadow);
+  }
+}
+#skills .tabs {
+  display: flex;
+}
+#skills .tabs .tab-button {
+  color: var(--color-heading);
+  padding: 5px 10px;
+  cursor: pointer;
+}
+#skills #skill-class-wrapper {
+  position: relative;
+  overflow-x: hidden;
+}
+#skills #skill-class-wrapper #skill-classes-all {
+  --num-skill-classes: 4;
+  width: calc(100% * var(--num-skill-classes));
+  display: flex;
+  position: absolute;
+  left: 0px;
+  transition: left 0.3s ease-in-out;
+}
+#skills #skill-class-wrapper #skill-classes-all .skill-class {
+  padding-bottom: 10px;
+  padding-top: 10px;
+  box-shadow: 0 10px 10px -10px var(--color-border);
+  opacity: 0;
+  transition: opacity 0.45s ease-in-out;
+}
+#skills #skill-class-wrapper #skill-classes-all .skill-class .skill-class-text {
+  padding-bottom: 30px;
+}
+#skills #skill-class-wrapper #skill-classes-all .skill-class .skill-class-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+#skills #skill-class-wrapper #skill-classes-all .skill-class .skill-class-skills .skill {
+  width: clamp(125px, 20vw, 150px);
+  aspect-ratio: 3;
+  background-color: var(--color-background-mute);
+  border-radius: 4px;
+  border: 2px solid var(--color-border);
+  color: var(--color-heading);
+  display: flex;
+  padding: 10px 17px;
+  align-items: center;
+  justify-content: center;
+  transition: border 0.1s ease-in-out;
+}
+#skills #skill-class-wrapper #skill-classes-all .skill-class .skill-class-skills .skill:hover {
+  border: 2px solid var(--color-border-hover);
+}
+#skills #skill-class-wrapper #skill-classes-all .skill-class .skill-class-skills .skill p,
+#skills #skill-class-wrapper #skill-classes-all .skill-class .skill-class-skills .skill img {
+  pointer-events: none;
+}
+#skills #skill-class-wrapper #skill-classes-all .skill-class .skill-class-skills .skill p {
+  margin-right: 10px;
+}
+#skills #skill-class-wrapper #skill-classes-all .skill-class .skill-class-skills .skill img {
+  height: 1.25rem;
+}
+#skills #skill-class-wrapper #skill-classes-all .skill-class.active {
+  opacity: 1;
+}
