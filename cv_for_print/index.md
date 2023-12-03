@@ -12,8 +12,6 @@ Problem&nbsp;solver,&nbsp;Programmer,&nbsp;Engineer
 <!-- plain link -->
 <div class="webaddress" id="webaddress_screen">
 
-<a href="https://myosq.github.io" target="_blank">Blog</a>
-| 
 <a href="https://github.com/MyosQ" target="_blank">Github</a>
 |
 <a href="https://www.linkedin.com/in/frej-sundqvist-b8a49a14b/" target="_blank">LinkedIn</a>
@@ -117,10 +115,6 @@ __Umeå Universitet__ ![Alt text](./images/umea.jpg){:class="education-logo"}
 __Julius-Maximilians-Universität Würzburg__ ![Alt text](./images/wuerzburg.png){:class="education-logo"}
 - Mathematics and robotics
 
-`2012 - 2015`
-__Naturvetenskapsprogrammet, Luleå__ ![Alt text](./images/lulea.png){:class="education-logo"}
-- Natural sciences
-
 ## Languages
 <span id="languages-screen">
 Swedish  
@@ -135,6 +129,7 @@ Swedish, English, German, Norwegian
 ## Other interests
 
 <span id="interests-screen">
+Economics  
 Reading books  
 Running  
 Fishing  
