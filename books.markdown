@@ -13,7 +13,7 @@ date: 2023-01-01 00:00:00 -0000
 <!-- Only include img if not starts with "_" -->
 <!-- TODO  Link to the psts --> 
 
-<div style="display: flex; flex-wrap: wrap; justify-content: space-around;">
+<div style="display: flex; flex-wrap: wrap; justify-content: flex-start;">
     <!-- loop through posts, only select those with certain category -->
     {% for post in site.posts %}
         {% if post.categories contains "Books I have recently read" %}
