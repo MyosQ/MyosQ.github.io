@@ -1,13 +1,15 @@
 #main {
-  margin-top: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px;
+  gap: 25px;
   overflow-y: scroll;
   height: 100vh;
   scrollbar-color: var(--color-border) var(--color-background);
   scrollbar-width: thin;
+}
+#main::before {
+  content: "";
 }
 #main::-webkit-scrollbar {
   width: 10px;
@@ -25,4 +27,8 @@
 }
 .section {
   width: clamp(var(--min-width-mobile), 90%, 700px);
+}
+.section-heading {
+  margin-top: 4px;
+  margin-bottom: 14px;
 }

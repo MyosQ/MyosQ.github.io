@@ -55,6 +55,12 @@ $(document).ready(() => {
     AOS.init();
     intersectionObservers();
     initSkillClassStuff(); 
+    PullToRefresh.init({
+      mainElement: 'body', // you can specify which element to target
+      onRefresh() {
+          window.location.reload(); // or call a function to update content
+      }
+  });
 });
 
 $(window).resize(() => {
