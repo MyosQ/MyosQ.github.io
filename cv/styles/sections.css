@@ -130,10 +130,11 @@
   border: 2px solid var(--color-border);
   color: var(--color-heading);
   display: flex;
-  padding: 10px 17px;
+  padding: 8px 15px;
   align-items: center;
   justify-content: center;
   transition: border 0.1s ease-in-out;
+  font-size: 0.9rem;
 }
 #skills #skill-class-wrapper #skill-classes-all .skill-class .skill-class-skills .skill:hover {
   border: 2px solid var(--color-border-hover);
@@ -146,7 +147,7 @@
   margin-right: 10px;
 }
 #skills #skill-class-wrapper #skill-classes-all .skill-class .skill-class-skills .skill img {
-  height: 1.25rem;
+  height: 1.125rem;
 }
 #skills #skill-class-wrapper #skill-classes-all .skill-class.active {
   opacity: 1;

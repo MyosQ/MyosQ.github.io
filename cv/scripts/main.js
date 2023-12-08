@@ -9,8 +9,6 @@ function intersectionObservers() {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('animate');
-            } else {
-                entry.target.classList.remove('animate');
             }
         });
     }, options);
@@ -52,15 +50,9 @@ function initSkillClassStuff() {
 
 
 $(document).ready(() => {
-    AOS.init();
-    intersectionObservers();
-    initSkillClassStuff(); 
-    PullToRefresh.init({
-      mainElement: 'body', // you can specify which element to target
-      onRefresh() {
-          window.location.reload(); // or call a function to update content
-      }
-  });
+  AOS.init();
+  intersectionObservers();
+  initSkillClassStuff(); 
 });
 
 $(window).resize(() => {
