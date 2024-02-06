@@ -1,3 +1,7 @@
+:root {
+    --section_width: clamp(var(--min-width-mobile), 90%, 700px);
+}
+
 #main {
     display: flex;
     flex-direction: column;
@@ -29,7 +33,7 @@
 }
 
 .section {
-    width: clamp(var(--min-width-mobile), 90%, 700px);
+    width: var(--section_width);
 }
 .section-heading {
     margin-top: 4px;
@@ -39,4 +43,8 @@
 .bottom-margin-container {
     margin-bottom: 300px;
     width: 100%;
+}
+
+.heading-margin-top {
+    margin-top: 8px;
 }

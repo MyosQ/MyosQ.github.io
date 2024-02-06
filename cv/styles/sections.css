@@ -97,7 +97,6 @@
 }
 #skills #skill-class-wrapper {
   position: relative;
-  overflow-x: hidden;
 }
 #skills #skill-class-wrapper #skill-classes-all {
   --num-skill-classes: 4;
@@ -110,6 +109,7 @@
 #skills #skill-class-wrapper #skill-classes-all .skill-class {
   padding-bottom: 10px;
   padding-top: 10px;
+  width: var(--section_width);
   box-shadow: 0 10px 10px -10px var(--color-border);
   opacity: 0;
   transition: opacity 0.45s ease-in-out;
