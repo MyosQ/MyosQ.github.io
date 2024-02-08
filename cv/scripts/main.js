@@ -48,11 +48,17 @@ function initSkillClassStuff() {
   parent_element.style.height = `${child_height}px`;
 }
 
+function set_initial_tab(tab) {
+  tab.click();
+}
 
 $(document).ready(() => {
   AOS.init();
   intersectionObservers();
   initSkillClassStuff(); 
+
+  // const initial_tab = document.querySelector('.tab-button[data-skill-class-id="databases"]');
+  // set_initial_tab(initial_tab);
 });
 
 $(window).resize(() => {
