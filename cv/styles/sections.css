@@ -34,8 +34,13 @@
   object-position: 0 10%;
 }
 #map {
-  min-height: 500px;
+  --ellipse-x: 100px;
+  --ellipse-y: 35px;
+  min-height: 380px;
+  width: 100%;
   background-color: var(--color-background);
+  border-top-left-radius: var(--ellipse-x) var(--ellipse-y);
+  border-bottom-right-radius: var(--ellipse-x) var(--ellipse-y);
 }
 #timeline {
   --current-event-box-shadow: 0 0 28px 20px var(--white),
@@ -128,7 +133,7 @@
   gap: 10px;
 }
 #skills #skill-class-wrapper #skill-classes-all .skill-class .skill-class-skills .skill {
-  width: clamp(125px, 20vw, 150px);
+  width: clamp(116px, 20vw, 150px);
   aspect-ratio: 3;
   background-color: var(--color-background-mute);
   border-radius: 4px;

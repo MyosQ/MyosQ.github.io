@@ -73,6 +73,30 @@ function init_map() {
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map);
+
+  const icon_size = 38;
+  const icon_normal = L.icon({
+    iconUrl: 'assets/map-marker.png',
+    iconSize: [icon_size, icon_size], // size of the icon
+    iconAnchor: [icon_size/2, icon_size], // point of the icon which will correspond to marker's location
+  });
+
+  const icon_hover_size = icon_size * 1.3;
+  const icon_hover = L.icon({
+    iconUrl: 'assets/map-marker.png',
+    iconSize: [icon_hover_size, icon_hover_size], // size of the icon
+    iconAnchor: [icon_hover_size/2, icon_hover_size], // point of the icon which will correspond to marker's location
+  });
+
+  const marker = L.marker([current_lat, current_lon], {icon: icon_normal}).addTo(map)
+
+  marker.on('mouseover', function(e) {
+    marker.setIcon(icon_hover);
+  });
+
+  marker.on('mouseout', function(e) {
+    marker.setIcon(icon_normal);
+  });
 }
 
 $(document).ready(() => {
@@ -80,12 +104,8 @@ $(document).ready(() => {
   intersectionObservers();
   initSkillClassStuff(); 
   init_map();
-
-  // const initial_tab = document.querySelector('.tab-button[data-skill-class-id="databases"]');
-  // set_initial_tab(initial_tab);
 });
 
 $(window).resize(() => {
     initSkillClassStuff();
 });
-    
