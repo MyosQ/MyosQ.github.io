@@ -52,10 +52,34 @@ function set_initial_tab(tab) {
   tab.click();
 }
 
+function init_map() {
+  
+  const map_div = document.getElementById('map');
+  const current_lat = map_div.getAttribute('data-current-location-lat');
+  const current_lon = map_div.getAttribute('data-current-location-lon');
+  
+  const map = L.map('map', {
+    center: [current_lat, current_lon],
+    zoom: 3,
+    zoomControl: false, // Disables zoom control
+    dragging: false, // Disables panning
+    scrollWheelZoom: false, // Disables zooming with the scroll wheel
+    doubleClickZoom: false, // Disables zooming on double click
+    touchZoom: false, // Disables pinch-to-zoom on touch devices
+    attributionControl : false,
+  });
+
+  
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+}
+
 $(document).ready(() => {
   AOS.init();
   intersectionObservers();
   initSkillClassStuff(); 
+  init_map();
 
   // const initial_tab = document.querySelector('.tab-button[data-skill-class-id="databases"]');
   // set_initial_tab(initial_tab);

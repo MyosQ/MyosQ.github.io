@@ -33,6 +33,10 @@
   object-fit: cover;
   object-position: 0 10%;
 }
+#map {
+  min-height: 500px;
+  background-color: var(--color-background);
+}
 #timeline {
   --current-event-box-shadow: 0 0 28px 20px var(--white),
                         0 0 50px 31px var(--secondary);

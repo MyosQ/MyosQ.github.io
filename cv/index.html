@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="description" content="Behold My Awesome Project!" />
     <meta name="author" content="Frej" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frej Sundqvist</title>
+
     <link rel="icon" href="assets/favicon.ico">
     <!-- AOS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -12,6 +15,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- Leaflet -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 
     <!-- font awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
@@ -25,8 +32,6 @@
     <!-- JS -->
     <script src="scripts/base.js"></script>
     <script src="scripts/main.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frej Sundqvist</title>
   </head>
   <body>
     <div id="main">
@@ -71,6 +76,12 @@
                 demonstrating my ability to bridge technical and non-technical domains effectively.
             </p>
         </div>
+
+        <!-- Map -->
+        <div id="map" class="section fade-in"
+            data-current-location-lat="69.6492"
+            data-current-location-lon="18.9553"
+        ></div>
 
         <!-- Timeline -->
         <div id="timeline" class="section slide-left delay-2">
@@ -294,7 +305,7 @@
             </div>
         </div>
         
-        <!-- Languages -->
+        <!-- Other -->
         <div id="other" class="section fade-in">
             <h2 class="section-heading">Other</h2>
             <div id="languages">
