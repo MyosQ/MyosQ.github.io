@@ -25,9 +25,21 @@
 \noindent
 \begin{minipage}{0.25\textwidth}
     \begin{tikzpicture}
-        \clip (-0.1,0.7) circle (1.9cm); % Adjust the radius as needed
-        \node at (0,0) {\includegraphics[height=4cm,angle=90]{./assets/profile_pic.jpg}};
+        % Define variables
+        \def\xCenter{-0.1} % X center of the circle
+        \def\yCenter{0.65} % Y center of the circle
+        \def\circleRadius{1.9} % Radius of the circle
+        
+        % Clipping for the image
+        \clip (\xCenter,\yCenter) circle (\circleRadius cm);
+        
+        % Place the image
+        \node at (0, 0) {\includegraphics[height=4cm,angle=90]{./assets/profile_pic.jpg}};
+        
+        % Draw the circular border
+        \draw[gray, thick] (\xCenter,\yCenter) circle (\circleRadius cm); % Adjust 'thick' as needed for border width
     \end{tikzpicture}
+
 \end{minipage}%
 \begin{minipage}{0.75\textwidth}
     \centerline{
@@ -37,6 +49,9 @@
     \centerline{
         \textit{Problem solver, Programmer, Engineer}
     }
+    \centerline{
+        From Sweden, living in Norway
+    }
     \vspace{0.5em}
     \centerline{
         {\faEnvelopeO} \href{mailto:frejsundqvist@protonmail.com}{frejsundqvist@protonmail.com}
@@ -44,43 +59,29 @@
         {\faGithub} \href{https://github.com/MyosQ}{MyosQ}
     }
     \centerline{
-        {\faLinkedin} \href{https://www.linkedin.com/in/frej-sundqvist-b8a49a14b}{frej-sundqvist-b8a49a14b}
+        {\faLinkedin} \href{https://linkedin.com/in/frej-sundqvist-b8a49a14b}{frej-sundqvist-b8a49a14b}
         |
-        {\faGlobe} \href{https://www.myosq.github.io/cv}{myosq.github.io/cv}    
+        {\faGlobe} \href{https://myosq.github.io/cv}{myosq.github.io/cv}    
     }
 \end{minipage}
 
 \vspace{1em}
 
-\section*{Education}
-\textbf{University Name}, Degree, \textit{Graduation Year}
-\begin{itemize}[noitemsep]
-    \item Major: Your Major Here
-    \item Relevant coursework: Course 1, Course 2, Course 3
-\end{itemize}
-
 \section*{Experience}
-\textbf{Job Title}, \textit{Company Name}, Location \hfill Month Year – Present
+\textbf{Fullstack developer, project leader}, \textit{Capia AS}, Tromsø, Norway \hfill 2021 - Present
 \begin{itemize}[noitemsep]
     \item Bullet point describing your responsibilities, achievements, technologies used, or projects.
     \item Another bullet point.
+    \item Another bullet point.
+    \item Another bullet point.
+    \item Another bullet point.
 \end{itemize}
 
-\textbf{Job Title}, \textit{Company Name}, Location \hfill Month Year – Month Year
+\section*{Education}
+\textbf{Master's degree in Engineering Physics}
 \begin{itemize}[noitemsep]
-    \item Description.
-\end{itemize}
-
-\section*{Projects}
-\textbf{Project Title}
-\begin{itemize}[noitemsep]
-    \item Brief description of your project, technologies used, and your contribution.
-    \item GitHub: \href{https://github.com/linktoproject}{linktoproject}
-\end{itemize}
-
-\textbf{Project Title}
-\begin{itemize}[noitemsep]
-    \item Brief description.
+    \item Umeå university, Sweden \hfill 2015 - 2021
+    \item Julius-Maximilians-Universität, Würzburg, Germany \hfill 2018 - 2019
 \end{itemize}
 
 \section*{Skills}
@@ -90,9 +91,22 @@
     \item Tools: Git, LaTeX, Jenkins
 \end{itemize}
 
+\section*{Projects}
+\textbf{Project Name}, \textit{Company Name}, Location \hfill Month Year – Month Year
+\begin{itemize}[noitemsep]
+    \item Description.
+    \item Another bullet point.
+    \item Another bullet point.
+\end{itemize}
+
+\section*{Languages}
+\begin{itemize}[noitemsep]
+    \item Swedish: Native
+    \item English: Fluent
+    \item German: Fluent
+    \item Norwegian: Fluent
+\end{itemize}
+
 \end{document}
-
-
-% Your other sections follow here...
 
 \end{document}
