@@ -1,2 +1,2 @@
-## My blog 
-https://myosq.github.io/
+## My CV/Blog
+https://myosq.github.io/cv

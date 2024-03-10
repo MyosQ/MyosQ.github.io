@@ -3,7 +3,7 @@ layout: cv
 title: CV
 ---
 <div id="profile_pic">
-    <img src="{{ site.baseurl }}/cv/images/frej.jpg" alt="alt text">
+    <img src="{{ site.baseurl }}/cv_for_print_old/images/frej.jpg" alt="alt text">
 </div>
 
 # Frej&nbsp;Sundqvist
