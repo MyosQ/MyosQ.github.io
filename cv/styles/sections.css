@@ -56,7 +56,6 @@
   display: flex;
   align-items: center;
   flex-direction: column;
-  width: 10%;
   min-width: 50px;
   height: 100%;
 }
