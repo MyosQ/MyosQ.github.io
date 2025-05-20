@@ -1,0 +1,7 @@
+services:
+  latex:
+    image: texlive/texlive
+    command: sh -c "latexmk -pdf cv.tex && latexmk -c"
+    volumes:
+      - ./cv_for_print/base:/src
+    working_dir: /src
