@@ -102,10 +102,10 @@ function init_map() {
 $(document).ready(() => {
   AOS.init();
   intersectionObservers();
-  initSkillClassStuff(); 
+  // initSkillClassStuff();
   init_map();
 });
 
 $(window).resize(() => {
-    initSkillClassStuff();
+    // initSkillClassStuff();
 });
