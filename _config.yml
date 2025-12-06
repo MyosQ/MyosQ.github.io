@@ -30,6 +30,10 @@ theme: minima
 plugins:
   - jekyll-feed
 
+# Include underscore folders from portfolio build
+include:
+  - portfolio/_app
+
 # CV
 markdown:   kramdown
 style: custom #davewhipp #kjhealy
