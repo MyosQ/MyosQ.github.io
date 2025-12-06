@@ -42,3 +42,8 @@ __latex_temp_files/
 *.ist
 *.xdy
 .vscode/
+.idea/
+
+# Portfolio (SvelteKit)
+portfolio-src/node_modules/
+portfolio-src/.svelte-kit/
