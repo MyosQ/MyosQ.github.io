@@ -3,11 +3,40 @@
 	import { Sky, OrbitControls } from '@threlte/extras';
 	import * as THREE from 'three';
 	import { Water } from 'three/examples/jsm/objects/Water.js';
+	import { OrbitControls as ThreeOrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 	import lakeGeoJson from '$lib/data/lake.json';
 	import FirTree from '$lib/components/FirTree.svelte';
+	import PineTree from '$lib/components/PineTree.svelte';
 	import { mulberry32 } from '$lib/utils/random';
+	import { browser } from '$app/environment';
 
 	extend({ Water });
+
+
+	// Camera URL hash persistence
+	let controlsRef: ThreeOrbitControls | undefined;
+	let cameraRef: THREE.PerspectiveCamera | undefined;
+
+	function parseCameraHash(): { pos: [number, number, number]; target: [number, number, number] } | null {
+		if (!browser) return null;
+		const hash = window.location.hash;
+		if (!hash.startsWith('#cam=')) return null;
+		const parts = hash.slice(5).split(',').map(Number);
+		if (parts.length !== 6 || parts.some(isNaN)) return null;
+		return {
+			pos: [parts[0], parts[1], parts[2]],
+			target: [parts[3], parts[4], parts[5]]
+		};
+	}
+
+	function saveCameraHash() {
+		if (!controlsRef || !cameraRef) return;
+		const p = cameraRef.position;
+		const t = controlsRef.target;
+		const round = (n: number) => Math.round(n * 10) / 10;
+		const hash = `#cam=${round(p.x)},${round(p.y)},${round(p.z)},${round(t.x)},${round(t.y)},${round(t.z)}`;
+		history.replaceState(null, '', hash);
+	}
 
 	// Scene configuration
 	const CONFIG = {
@@ -18,6 +47,10 @@
 		light: { color: '#ffccaa', ambient: '#d4a5b5', shadowSize: 2048 },
 		fog: { color: '#e8c8d8', near: 100, far: 800 }
 	} as const;
+
+	const initialCamera = parseCameraHash();
+	const initialCamPos: [number, number, number] = initialCamera?.pos ?? CONFIG.camera.position;
+	const initialTarget: [number, number, number] = initialCamera?.target ?? [200, 80, 0];
 
 	const lakeCoords = lakeGeoJson.geometry.coordinates[0] as [number, number][];
 
@@ -122,8 +155,8 @@
 		foliageStart: number;
 	}> = [];
 
-	for (let i = 0; i < 200; i++) {
-		const angle = (i / 200) * Math.PI * 2 + treeRng() * 0.5;
+	for (let i = 0; i < 10; i++) {
+		const angle = (i / 10) * Math.PI * 2 + treeRng() * 0.5;
 		const dist = 200 + treeRng() * 300;
 		const x = Math.cos(angle) * dist;
 		const z = Math.sin(angle) * dist;
@@ -147,16 +180,67 @@
 			foliageStart: 0.10 + treeRng() * 0.04
 		});
 	}
+
+	// Generate pine trees (offset from fir trees)
+	const pineRng = mulberry32(67890);
+	const pines: Array<{
+		position: [number, number, number];
+		scale: number;
+		seed: number;
+		trunkHeight: number;
+		trunkBaseRadius: number;
+		trunkTopRadius: number;
+		whorls: number;
+		branchesPerWhorl: number;
+		branchLength: number;
+		branchSweep: number;
+		fasciclesPerBranch: number;
+		foliageStart: number;
+	}> = [];
+
+	for (let i = 0; i < 5; i++) {
+		// Offset angle from fir trees
+		const angle = ((i + 0.5) / 5) * Math.PI * 2 + pineRng() * 0.4;
+		const dist = 250 + pineRng() * 250;
+		const x = Math.cos(angle) * dist;
+		const z = Math.sin(angle) * dist;
+
+		if (isInsideLake(x, z)) continue;
+
+		const height = 5 + pineRng() * 6;
+		const heightRatio = height / 10; // Scale factor based on height
+		pines.push({
+			position: [x, 0, z],
+			scale: 8 + pineRng() * 5,
+			seed: i + 100,
+			trunkHeight: height,
+			trunkBaseRadius: (0.18 + pineRng() * 0.06) * heightRatio,
+			trunkTopRadius: (0.03 + pineRng() * 0.02) * heightRatio,
+			whorls: 16 + Math.floor(pineRng() * 4) - 2,
+			branchesPerWhorl: 5,
+			branchLength: (0.8 + pineRng() * 0.3) * heightRatio,
+			branchSweep: 0.9 + pineRng() * 0.2 - 0.1,
+			fasciclesPerBranch: 20 + Math.floor(pineRng() * 6) - 3,
+			foliageStart: 0.35 + pineRng() * 0.1 - 0.05
+		});
+	}
 </script>
 
 <!-- Camera + Controls -->
-<T.PerspectiveCamera makeDefault position={CONFIG.camera.position} fov={CONFIG.camera.fov}>
+<T.PerspectiveCamera
+	makeDefault
+	position={initialCamPos}
+	fov={CONFIG.camera.fov}
+	oncreate={(ref) => { cameraRef = ref }}
+>
 	<OrbitControls
 		enableDamping
 		maxPolarAngle={Math.PI / 2.1}
 		minDistance={CONFIG.camera.minDist}
 		maxDistance={CONFIG.camera.maxDist}
-		target={[200, 80, 0]}
+		target={initialTarget}
+		oncreate={(ref) => { controlsRef = ref }}
+		onend={saveCameraHash}
 	/>
 </T.PerspectiveCamera>
 
@@ -218,5 +302,23 @@
 		needleDensity={tree.needleDensity}
 		needleSize={tree.needleSize}
 		foliageStart={tree.foliageStart}
+	/>
+{/each}
+
+<!-- Pine trees around lake -->
+{#each pines as pine (pine.seed)}
+	<PineTree
+		position={pine.position}
+		scale={pine.scale}
+		seed={pine.seed}
+		trunkHeight={pine.trunkHeight}
+		trunkBaseRadius={pine.trunkBaseRadius}
+		trunkTopRadius={pine.trunkTopRadius}
+		whorls={pine.whorls}
+		branchesPerWhorl={pine.branchesPerWhorl}
+		branchLength={pine.branchLength}
+		branchSweep={pine.branchSweep}
+		fasciclesPerBranch={pine.fasciclesPerBranch}
+		foliageStart={pine.foliageStart}
 	/>
 {/each}
