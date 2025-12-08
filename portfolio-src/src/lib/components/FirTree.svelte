@@ -5,7 +5,7 @@
 	import { createBarkTexture, getBranchGeometry } from '$lib/utils/tree';
 
 	const FIXED = {
-		rootFlareRadius: 0.35,
+		rootFlareMultiplier: 1.75,
 		rootFlareHeight: 0.008,
 		foliageEnd: 1
 	};
@@ -56,12 +56,11 @@
 		foliageStart = 0.12
 	}: Props = $props();
 
-	// Combine props into TREE object for internal use
 	const TREE = {
 		trunkHeight,
 		trunkBaseRadius,
 		trunkTopRadius,
-		rootFlareRadius: FIXED.rootFlareRadius,
+		rootFlareMultiplier: FIXED.rootFlareMultiplier,
 		rootFlareHeight: FIXED.rootFlareHeight,
 		branchTiers,
 		branchesPerTier,
@@ -74,8 +73,6 @@
 	};
 
 	const random = mulberry32(seed);
-
-	// Derived values from params
 	const VISIBLE_TRUNK_HEIGHT = TREE.trunkHeight * TREE.foliageEnd;
 
 	// Create trunk with bark detail and root flare - only up to foliage height
@@ -112,7 +109,7 @@
 				// Exponential curve for natural root flare shape
 				const flareAmount = Math.pow(flareProgress, 2.5);
 				// Scale from base radius to flare radius
-				flareMultiplier = 1 + (TREE.rootFlareRadius / TREE.trunkBaseRadius - 1) * flareAmount;
+				flareMultiplier = 1 + (TREE.rootFlareMultiplier - 1) * flareAmount;
 			}
 
 			// Bark ridges - vertical grooves

@@ -45,7 +45,7 @@
 		water: { textureSize: 512, distortionScale: 20, animSpeed: 0.5 },
 		camera: { position: [0, 80, 0] as [number, number, number], fov: 60, minDist: 10, maxDist: 1500 },
 		light: { color: '#ffccaa', ambient: '#d4a5b5', shadowSize: 2048 },
-		fog: { color: '#e8c8d8', near: 100, far: 800 }
+		fog: { color: '#e8c8d8', near: 300, far: 1400 }
 	} as const;
 
 	const initialCamera = parseCameraHash();
@@ -54,40 +54,95 @@
 
 	const lakeCoords = lakeGeoJson.geometry.coordinates[0] as [number, number][];
 
+	// Distance to nearest lake edge segment
+	// Note: lakeCoords is GeoJSON format where first/last points are identical
+	function distToLakeEdge(px: number, pz: number): number {
+		let minDist = Infinity;
+		const n = lakeCoords.length - 1; // Exclude duplicate closing point
+
+		for (let i = 0; i < n; i++) {
+			const ax = lakeCoords[i][0], az = lakeCoords[i][1];
+			const bx = lakeCoords[(i + 1) % n][0], bz = lakeCoords[(i + 1) % n][1];
+			const dx = bx - ax, dz = bz - az;
+			const len2 = dx * dx + dz * dz;
+			if (len2 === 0) continue; // Skip degenerate edges
+			const t = Math.max(0, Math.min(1, ((px - ax) * dx + (pz - az) * dz) / len2));
+			const nearX = ax + t * dx, nearZ = az + t * dz;
+			const dist = Math.sqrt((px - nearX) ** 2 + (pz - nearZ) ** 2);
+			if (dist < minDist) minDist = dist;
+		}
+		return minDist;
+	}
+
 	// Point-in-polygon check (ray casting algorithm)
-	function isInsideLake(x: number, z: number): boolean {
+	// Note: lakeCoords is GeoJSON format where first/last points are identical (closed polygon)
+	// We skip the duplicate closing point by using length - 1
+	function isInsideLake(px: number, pz: number): boolean {
 		let inside = false;
-		for (let i = 0, j = lakeCoords.length - 1; i < lakeCoords.length; j = i++) {
-			const xi = lakeCoords[i][0], yi = lakeCoords[i][1];
-			const xj = lakeCoords[j][0], yj = lakeCoords[j][1];
-			if (((yi > z) !== (yj > z)) && (x < (xj - xi) * (z - yi) / (yj - yi) + xi)) {
-				inside = !inside;
+		const n = lakeCoords.length - 1; // Exclude duplicate closing point
+
+		for (let i = 0, j = n - 1; i < n; j = i++) {
+			const ix = lakeCoords[i][0], iz = lakeCoords[i][1]; // Current vertex
+			const jx = lakeCoords[j][0], jz = lakeCoords[j][1]; // Previous vertex
+
+			// Check if edge crosses the horizontal ray from point to +infinity
+			const edgeCrossesRay = (iz > pz) !== (jz > pz);
+			if (edgeCrossesRay) {
+				// Calculate x-coordinate where edge intersects the ray
+				const intersectX = (jx - ix) * (pz - iz) / (jz - iz) + ix;
+				if (px < intersectX) {
+					inside = !inside;
+				}
 			}
 		}
 		return inside;
 	}
 
-	// Create terrain with lake hole cut out (exact edge match)
-	function createTerrainGeometry(): THREE.ShapeGeometry {
-		const half = CONFIG.terrain.size / 2;
+	// Check if position is too close to lake (inside or within buffer)
+	function tooCloseToLake(x: number, z: number, buffer: number): boolean {
+		if (isInsideLake(x, z)) return true;
+		return distToLakeEdge(x, z) < buffer;
+	}
 
-		// Outer terrain boundary
-		const terrainShape = new THREE.Shape();
-		terrainShape.moveTo(-half, -half);
-		terrainShape.lineTo(half, -half);
-		terrainShape.lineTo(half, half);
-		terrainShape.lineTo(-half, half);
-		terrainShape.closePath();
+	// Simple noise function for terrain
+	function noise2D(x: number, z: number, seed: number): number {
+		const n = Math.sin(x * 0.01 + seed) * Math.cos(z * 0.01 + seed * 1.3) +
+		          Math.sin(x * 0.005 + z * 0.008 + seed * 0.7) * 0.5 +
+		          Math.sin(x * 0.02 - z * 0.015 + seed * 2.1) * 0.25;
+		return n / 1.75;
+	}
 
-		// Lake hole (reverse winding for hole)
-		const lakeHole = new THREE.Path();
-		lakeHole.moveTo(lakeCoords[0][0], lakeCoords[0][1]);
-		for (let i = lakeCoords.length - 1; i >= 0; i--) {
-			lakeHole.lineTo(lakeCoords[i][0], lakeCoords[i][1]);
+	// Get terrain height at world position (x, z)
+	function getTerrainHeight(x: number, z: number): number {
+		const distFromEdge = distToLakeEdge(x, z);
+		const distFactor = Math.min(1, distFromEdge / 300);
+		const baseHeight = distFactor * 20;
+		const variation = (noise2D(x, z, 42) * 0.5 + 0.5) * 30 * distFactor;
+		return baseHeight + variation;
+	}
+
+	// Create terrain with dense vertex grid
+	function createTerrainGeometry(): THREE.BufferGeometry {
+		const size = CONFIG.terrain.size;
+		const segments = 100; // Dense grid for accurate height sampling
+
+		const geometry = new THREE.PlaneGeometry(size, size, segments, segments);
+		const positions = geometry.attributes.position;
+
+		for (let i = 0; i < positions.count; i++) {
+			const x = positions.getX(i);
+			const z = positions.getY(i); // PlaneGeometry is in XY, we rotate to XZ
+
+			if (isInsideLake(x, z)) {
+				// Sink lake vertices below water
+				positions.setZ(i, -5);
+			} else {
+				positions.setZ(i, getTerrainHeight(x, z));
+			}
 		}
-		terrainShape.holes.push(lakeHole);
 
-		return new THREE.ShapeGeometry(terrainShape, 1);
+		geometry.computeVertexNormals();
+		return geometry;
 	}
 
 	const terrainGeometry = createTerrainGeometry();
@@ -155,29 +210,31 @@
 		foliageStart: number;
 	}> = [];
 
-	for (let i = 0; i < 10; i++) {
-		const angle = (i / 10) * Math.PI * 2 + treeRng() * 0.5;
-		const dist = 200 + treeRng() * 300;
+	for (let i = 0; i < 80; i++) {
+		const angle = treeRng() * Math.PI * 2;
+		const dist = 120 + treeRng() * 600;
 		const x = Math.cos(angle) * dist;
 		const z = Math.sin(angle) * dist;
+		const scale = 6 + treeRng() * 12;
 
-		// Skip if inside lake
-		if (isInsideLake(x, z)) continue;
+		// Buffer based on tree size to keep foliage out of lake
+		// Note: lake/terrain functions use shape coords where shapeY = -worldZ
+		if (tooCloseToLake(x, -z, scale * 3)) continue;
 
 		trees.push({
-			position: [x, 0, z],
-			scale: 10 + treeRng() * 6,
+			position: [x, getTerrainHeight(x, -z), z],
+			scale,
 			seed: i + 1,
-			trunkHeight: 5 + treeRng() * 8,
-			branchLength: 1.0 + treeRng() * 1.4,
-			trunkBaseRadius: 0.18 + treeRng() * 0.04,
-			trunkTopRadius: 0.008 + treeRng() * 0.004,
-			branchTiers: 38 + Math.floor(treeRng() * 5),
-			branchesPerTier: 6 + Math.floor(treeRng() * 2),
-			branchDroop: 0.6 + treeRng() * 0.1,
-			needleDensity: 15 + Math.floor(treeRng() * 3),
-			needleSize: 0.75 + treeRng() * 0.1,
-			foliageStart: 0.10 + treeRng() * 0.04
+			trunkHeight: 4 + treeRng() * 10,
+			branchLength: 0.8 + treeRng() * 1.8,
+			trunkBaseRadius: 0.15 + treeRng() * 0.08,
+			trunkTopRadius: 0.006 + treeRng() * 0.006,
+			branchTiers: 30 + Math.floor(treeRng() * 15),
+			branchesPerTier: 5 + Math.floor(treeRng() * 3),
+			branchDroop: 0.5 + treeRng() * 0.3,
+			needleDensity: 12 + Math.floor(treeRng() * 6),
+			needleSize: 0.6 + treeRng() * 0.3,
+			foliageStart: 0.08 + treeRng() * 0.08
 		});
 	}
 
@@ -198,30 +255,32 @@
 		foliageStart: number;
 	}> = [];
 
-	for (let i = 0; i < 5; i++) {
-		// Offset angle from fir trees
-		const angle = ((i + 0.5) / 5) * Math.PI * 2 + pineRng() * 0.4;
-		const dist = 250 + pineRng() * 250;
+	for (let i = 0; i < 40; i++) {
+		const angle = pineRng() * Math.PI * 2;
+		const dist = 150 + pineRng() * 550;
 		const x = Math.cos(angle) * dist;
 		const z = Math.sin(angle) * dist;
+		const scale = 5 + pineRng() * 10;
 
-		if (isInsideLake(x, z)) continue;
+		// Buffer based on tree size to keep foliage out of lake
+		// Note: lake/terrain functions use shape coords where shapeY = -worldZ
+		if (tooCloseToLake(x, -z, scale * 2.5)) continue;
 
-		const height = 5 + pineRng() * 6;
-		const heightRatio = height / 10; // Scale factor based on height
+		const height = 4 + pineRng() * 8;
+		const heightRatio = height / 10;
 		pines.push({
-			position: [x, 0, z],
-			scale: 8 + pineRng() * 5,
+			position: [x, getTerrainHeight(x, -z), z],
+			scale,
 			seed: i + 100,
 			trunkHeight: height,
-			trunkBaseRadius: (0.18 + pineRng() * 0.06) * heightRatio,
-			trunkTopRadius: (0.03 + pineRng() * 0.02) * heightRatio,
-			whorls: 16 + Math.floor(pineRng() * 4) - 2,
-			branchesPerWhorl: 5,
-			branchLength: (0.8 + pineRng() * 0.3) * heightRatio,
-			branchSweep: 0.9 + pineRng() * 0.2 - 0.1,
-			fasciclesPerBranch: 20 + Math.floor(pineRng() * 6) - 3,
-			foliageStart: 0.35 + pineRng() * 0.1 - 0.05
+			trunkBaseRadius: (0.15 + pineRng() * 0.1) * heightRatio,
+			trunkTopRadius: (0.02 + pineRng() * 0.03) * heightRatio,
+			whorls: 12 + Math.floor(pineRng() * 8),
+			branchesPerWhorl: 4 + Math.floor(pineRng() * 3),
+			branchLength: (0.6 + pineRng() * 0.6) * heightRatio,
+			branchSweep: 0.7 + pineRng() * 0.5,
+			fasciclesPerBranch: 15 + Math.floor(pineRng() * 10),
+			foliageStart: 0.25 + pineRng() * 0.2
 		});
 	}
 </script>

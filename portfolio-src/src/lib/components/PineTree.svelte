@@ -9,8 +9,8 @@
 		trunk: { segments: 8, barkRidgeFreq: 6, barkBumpFreq: 10 },
 		branch: { baseRadius: 0.04, radialSegments: 5 },
 		subBranch: { baseRadius: 0.02, radialSegments: 4 },
-		needle: { length: 0.55, radius: 0.006, segments: 3, perFascicle: 5 },
-		rootFlare: { radius: 0.30, height: 0.01 }
+		needle: { length: 0.35, radius: 0.006, segments: 3, perFascicle: 5 },
+		rootFlare: { multiplier: 1.5, height: 0.01 }
 	} as const;
 
 	// Redder trunk color
@@ -90,7 +90,7 @@
 			if (distFromBottom < flareZone) {
 				const flareProgress = 1 - distFromBottom / flareZone;
 				const flareAmount = Math.pow(flareProgress, 2.5);
-				flareMultiplier = 1 + (CONFIG.rootFlare.radius / trunkBaseRadius - 1) * flareAmount;
+				flareMultiplier = 1 + (CONFIG.rootFlare.multiplier - 1) * flareAmount;
 			}
 
 			// Bark texture displacement
@@ -149,7 +149,7 @@
 
 		for (let b = 0; b < branchCount; b++) {
 			const angle = (b / branchCount) * Math.PI * 2 + whorlOffset;
-			const thisBranchLength = whorlBranchLength * (0.3 + random() * 1.4);
+			const thisBranchLength = Math.min(whorlBranchLength * (0.3 + random() * 1.4), branchLength * 1.3);
 
 			// Branches curve: start horizontal/slight down, then curve UP at tips
 			const initialAngle = -0.1 + random() * 0.1; // Start slightly downward
@@ -173,7 +173,9 @@
 
 			const branchMatrix = new THREE.Matrix4();
 			branchMatrix.makeRotationFromQuaternion(quaternion);
-			const branchWidth = 0.4 + random() * 1.2;
+			// Thicker at bottom, thinner at top
+			const heightFactor = 1.5 - whorlProgress * 0.8; // 1.5 at bottom, 0.7 at top
+			const branchWidth = (0.5 + random() * 0.8) * heightFactor;
 			branchMatrix.scale(new THREE.Vector3(thisBranchLength, branchWidth, branchWidth));
 			branchMatrix.setPosition(branchPos);
 			branchMatrices.push(branchMatrix);
@@ -206,7 +208,8 @@
 				const subBranchRot = new THREE.Euler().setFromQuaternion(subQuat);
 
 				const subBranchLength = thisBranchLength * (0.2 + random() * 0.8);
-				const subBranchWidth = 0.3 + random() * 1.0;
+				// Sub-branches also thicker lower on tree
+				const subBranchWidth = (0.4 + random() * 0.6) * heightFactor;
 
 				const subMatrix = new THREE.Matrix4();
 				subMatrix.makeRotationFromQuaternion(subQuat);
