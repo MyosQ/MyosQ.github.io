@@ -26,12 +26,23 @@ _posts/          → Blog posts (underscore prefix = draft)
 SvelteKit 2 + Svelte 5 + Threlte 8 (Three.js wrapper). Deployed at `/portfolio`.
 
 - `src/routes/+page.svelte` - Main page with Canvas
-- `src/routes/Scene.svelte` - 3D scene (camera, lights, meshes)
-- Uses `@threlte/core` for Canvas/T components, `@threlte/extras` for OrbitControls
+- `src/routes/Scene.svelte` - 3D scene (camera, lights, meshes, tree generation)
+- `src/lib/components/` - FirTree.svelte, PineTree.svelte (procedural trees)
+- `src/lib/utils/tree.ts` - Shared bark textures, branch geometry (cached)
+- `src/lib/data/lake.json` - GeoJSON polygon for lake shape
 
 Commands:
 - Dev: `npm run dev --prefix portfolio-src`
 - Build: `npm run build --prefix portfolio-src` (outputs to `portfolio/`)
+
+### Coordinate System (CRITICAL)
+PlaneGeometry + `rotation.x={-Math.PI/2}` transforms: local Y → world -Z.
+- Lake/terrain functions (`isInsideLake`, `getTerrainHeight`, `distToLakeEdge`) use shape coords
+- World objects (trees) use world coords
+- ALWAYS negate z when querying: `getTerrainHeight(x, -z)`, `tooCloseToLake(x, -z, buffer)`
+
+### GeoJSON Lake Polygon
+`lake.json` has duplicate closing point (GeoJSON standard). In loops: use `length - 1` to exclude duplicate.
 
 ## Interactive CV (cv/)
 
