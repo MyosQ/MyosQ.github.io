@@ -34,8 +34,8 @@
 		branchSweep?: number;
 		fasciclesPerBranch?: number;
 		foliageStart?: number;
-		leaderHeight?: number;
-		leaderSpread?: number;
+		crownHeight?: number;
+		crownSpread?: number;
 	}
 
 	let {
@@ -51,8 +51,8 @@
 		branchSweep = 0.4,
 		fasciclesPerBranch = 12,
 		foliageStart = 0.35,
-		leaderHeight = 0.08,
-		leaderSpread = 0.4
+		crownHeight = 0.12,
+		crownSpread = 0.6
 	}: Props = $props();
 
 	const random = mulberry32(seed);
@@ -309,99 +309,176 @@
 		}
 	}
 
-	// Apical leader (subtle top growth point)
-	const actualLeaderHeight = trunkHeight * leaderHeight * 0.5;
-	const leaderTiers = 3;
-	const leaderBranchesPerTier = 3;
+	// Crown - rounded dome shape
+	const actualCrownHeight = trunkHeight * crownHeight * 0.6;
+	const crownTiers = 3;
+	const crownBranchesPerTier = 6;
 
-	for (let tier = 0; tier < leaderTiers; tier++) {
-		const tierProgress = tier / (leaderTiers - 1);
-		const tierY = VISIBLE_TRUNK + tierProgress * actualLeaderHeight;
-		const tierRadius = leaderSpread * (1 - tierProgress * 0.7) * branchLength * 0.3;
-		const tierOffset = tier * 0.8 + random() * 0.4;
+	for (let tier = 0; tier < crownTiers; tier++) {
+		const tierProgress = tier / Math.max(1, crownTiers - 1);
+		const tierY = VISIBLE_TRUNK * 0.90 + tierProgress * actualCrownHeight;
+		// Branches shorter at top for dome shape
+		const tierSpread = crownSpread * branchLength * (1.0 - tierProgress * 0.5);
+		const tierOffset = tier * 0.6 + random() * 0.3;
 
-		// Leader branches point upward and outward
-		for (let b = 0; b < leaderBranchesPerTier; b++) {
-			const angle = (b / leaderBranchesPerTier) * Math.PI * 2 + tierOffset;
-			const branchLen = tierRadius * (0.7 + random() * 0.6);
+		for (let b = 0; b < crownBranchesPerTier; b++) {
+			const angle = (b / crownBranchesPerTier) * Math.PI * 2 + tierOffset;
+			const branchLen = tierSpread * (0.85 + random() * 0.3);
 
-			// Direction: upward and outward
-			const upAngle = 0.4 + tierProgress * 0.4; // More vertical at top
+			// Crown branches: angle up more at higher tiers for dome
+			const upAngle = 0.1 + tierProgress * 0.4 + random() * 0.1;
 			const outDir = new THREE.Vector3(
-				Math.cos(angle) * (1 - upAngle),
-				upAngle,
-				Math.sin(angle) * (1 - upAngle)
+				Math.cos(angle) * Math.cos(upAngle),
+				Math.sin(upAngle),
+				Math.sin(angle) * Math.cos(upAngle)
 			).normalize();
 
 			const branchPos = new THREE.Vector3(
-				Math.cos(angle) * trunkTopRadius * 0.5,
+				Math.cos(angle) * trunkTopRadius * 0.8,
 				tierY,
-				Math.sin(angle) * trunkTopRadius * 0.5
+				Math.sin(angle) * trunkTopRadius * 0.8
 			);
 
-			// Leader branch matrix
-			const leaderQuat = new THREE.Quaternion();
-			leaderQuat.setFromUnitVectors(new THREE.Vector3(1, 0, 0), outDir);
-			const leaderMatrix = new THREE.Matrix4();
-			leaderMatrix.makeRotationFromQuaternion(leaderQuat);
-			leaderMatrix.scale(new THREE.Vector3(branchLen, 0.5, 0.5));
-			leaderMatrix.setPosition(branchPos);
-			subBranchMatrices.push(leaderMatrix);
+			const crownQuat = new THREE.Quaternion();
+			crownQuat.setFromUnitVectors(new THREE.Vector3(1, 0, 0), outDir);
+			const crownMatrix = new THREE.Matrix4();
+			crownMatrix.makeRotationFromQuaternion(crownQuat);
+			crownMatrix.scale(new THREE.Vector3(branchLen, 0.7, 0.7));
+			crownMatrix.setPosition(branchPos);
+			branchMatrices.push(crownMatrix);
 
-			// Needles at leader branch tips
-			const leaderRot = new THREE.Euler().setFromQuaternion(leaderQuat);
-			const tipFascicles = 4;
-			for (let f = 0; f < tipFascicles; f++) {
-				const t = 0.5 + (f / tipFascicles) * 0.5;
-				const needleLocalPos = new THREE.Vector3(branchLen * t, t * 0.1 * branchLen, 0);
-				needleLocalPos.applyEuler(leaderRot);
+			// Dense foliage along crown branches
+			const crownRot = new THREE.Euler().setFromQuaternion(crownQuat);
+			const crownFascicles = Math.floor(fasciclesPerBranch * 0.8);
+
+			for (let f = 0; f < crownFascicles; f++) {
+				const fascicleProgress = f / Math.max(1, crownFascicles - 1);
+				const t = 0.3 + fascicleProgress * 0.7;
+				const upCurve = Math.pow(t, 2) * 0.15 * branchLen;
+
+				const needleLocalPos = new THREE.Vector3(branchLen * t, upCurve, (random() - 0.5) * 0.1);
+				needleLocalPos.applyEuler(crownRot);
 				const fasciclePos = branchPos.clone().add(needleLocalPos);
 
 				for (let n = 0; n < CONFIG.needle.perFascicle; n++) {
-					const needleAngle = (n / CONFIG.needle.perFascicle) * Math.PI * 2 + random() * 0.5;
-					const spreadAngle = 0.5 + random() * 0.3;
+					const needleAngle = (n / CONFIG.needle.perFascicle) * Math.PI * 2 + random() * 0.6;
+					const spreadAngle = 0.3 + random() * 0.4;
 
 					const needleDir = new THREE.Vector3(
-						outDir.x * 0.5 + Math.cos(needleAngle) * 0.3,
-						0.6 + Math.sin(spreadAngle) * 0.3,
-						outDir.z * 0.5 + Math.sin(needleAngle) * 0.3
+						outDir.x * 0.4 + Math.cos(needleAngle) * 0.4,
+						0.5 + Math.sin(spreadAngle) * 0.4,
+						outDir.z * 0.4 + Math.sin(needleAngle) * 0.4
 					).normalize();
 
 					const needleQuat = new THREE.Quaternion();
 					needleQuat.setFromUnitVectors(new THREE.Vector3(0, 0, 1), needleDir);
 					const needleRot = new THREE.Euler().setFromQuaternion(needleQuat);
 
+					const colorMix = 0.4 + fascicleProgress * 0.4 + random() * 0.2;
 					needles.push({
 						position: fasciclePos.clone(),
 						rotation: needleRot,
-						scale: 0.8 + random() * 0.4,
-						color: COLORS.needleTip.clone()
+						scale: 0.9 + random() * 0.3,
+						color: COLORS.needleBase.clone().lerp(COLORS.needleTip, colorMix)
 					});
+				}
+			}
+
+			// Sub-branches on crown branches
+			const crownSubCount = 2 + Math.floor(random() * 2);
+			for (let sb = 0; sb < crownSubCount; sb++) {
+				const subT = 0.3 + (sb / crownSubCount) * 0.5;
+				const subLocalPos = new THREE.Vector3(branchLen * subT, 0, 0);
+				subLocalPos.applyEuler(crownRot);
+				const subPos = branchPos.clone().add(subLocalPos);
+
+				const subAngleH = (random() - 0.5) * Math.PI * 0.8;
+				const subAngleV = 0.1 + random() * 0.4;
+				const subDir = new THREE.Vector3(
+					Math.cos(angle + subAngleH) * Math.cos(subAngleV),
+					Math.sin(subAngleV),
+					Math.sin(angle + subAngleH) * Math.cos(subAngleV)
+				).normalize();
+
+				const subQuat = new THREE.Quaternion();
+				subQuat.setFromUnitVectors(new THREE.Vector3(1, 0, 0), subDir);
+				const subLen = branchLen * (0.3 + random() * 0.3);
+
+				const subMatrix = new THREE.Matrix4();
+				subMatrix.makeRotationFromQuaternion(subQuat);
+				subMatrix.scale(new THREE.Vector3(subLen, 0.5, 0.5));
+				subMatrix.setPosition(subPos);
+				subBranchMatrices.push(subMatrix);
+
+				// Needles on sub-branches
+				const subRot = new THREE.Euler().setFromQuaternion(subQuat);
+				for (let f = 0; f < 4; f++) {
+					const t = 0.5 + (f / 4) * 0.5;
+					const subNeedlePos = new THREE.Vector3(subLen * t, 0, 0);
+					subNeedlePos.applyEuler(subRot);
+					const fasciclePos = subPos.clone().add(subNeedlePos);
+
+					for (let n = 0; n < CONFIG.needle.perFascicle; n++) {
+						const needleAngle = (n / CONFIG.needle.perFascicle) * Math.PI * 2 + random() * 0.5;
+						const needleDir = new THREE.Vector3(
+							subDir.x * 0.3 + Math.cos(needleAngle) * 0.4,
+							0.6 + random() * 0.3,
+							subDir.z * 0.3 + Math.sin(needleAngle) * 0.4
+						).normalize();
+
+						const needleQuat = new THREE.Quaternion();
+						needleQuat.setFromUnitVectors(new THREE.Vector3(0, 0, 1), needleDir);
+
+						needles.push({
+							position: fasciclePos.clone(),
+							rotation: new THREE.Euler().setFromQuaternion(needleQuat),
+							scale: 0.8 + random() * 0.3,
+							color: COLORS.needleTip.clone()
+						});
+					}
 				}
 			}
 		}
 	}
 
-	// Very top spike (subtle)
-	for (let i = 0; i < 4; i++) {
-		const progress = i / 3;
-		const y = VISIBLE_TRUNK + actualLeaderHeight + progress * actualLeaderHeight * 0.15;
-		const spikeAngle = i * 2.4 + random() * 0.3;
-		const radius = 0.015 * (1 - progress * 0.9);
+	// Central tuft - apex of dome
+	const leaderTipY = VISIBLE_TRUNK * 0.92 + actualCrownHeight * 0.85;
+	const leaderTuftRadius = 0.25;
 
-		const needlePos = new THREE.Vector3(
-			Math.cos(spikeAngle) * radius,
-			y,
-			Math.sin(spikeAngle) * radius
-		);
-		const needleRot = new THREE.Euler(-Math.PI / 2 + progress * 0.2, spikeAngle, 0);
+	// Dense needles forming dome apex
+	for (let ring = 0; ring < 3; ring++) {
+		const ringY = leaderTipY + ring * 0.06;
+		const ringRadius = leaderTuftRadius * (1 - ring * 0.25);
+		const needlesInRing = 8 - ring * 2;
 
-		needles.push({
-			position: needlePos,
-			rotation: needleRot,
-			scale: 0.6 - progress * 0.4,
-			color: COLORS.needleTip.clone()
-		});
+		for (let n = 0; n < needlesInRing; n++) {
+			const angle = (n / needlesInRing) * Math.PI * 2 + ring * 0.5 + random() * 0.3;
+			const spreadFromCenter = ringRadius * (0.3 + random() * 0.7);
+
+			const needlePos = new THREE.Vector3(
+				Math.cos(angle) * spreadFromCenter,
+				ringY,
+				Math.sin(angle) * spreadFromCenter
+			);
+
+			// Needles angle up more at apex for rounded finish
+			const upwardness = 0.4 + ring * 0.25;
+			const needleDir = new THREE.Vector3(
+				Math.cos(angle) * (1 - upwardness) * 0.8,
+				upwardness,
+				Math.sin(angle) * (1 - upwardness) * 0.8
+			).normalize();
+
+			const needleQuat = new THREE.Quaternion();
+			needleQuat.setFromUnitVectors(new THREE.Vector3(0, 0, 1), needleDir);
+
+			needles.push({
+				position: needlePos,
+				rotation: new THREE.Euler().setFromQuaternion(needleQuat),
+				scale: 1.0 - ring * 0.15,
+				color: COLORS.needleTip.clone()
+			});
+		}
 	}
 
 	// Create instanced meshes
