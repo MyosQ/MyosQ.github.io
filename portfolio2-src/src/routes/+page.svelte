@@ -81,17 +81,16 @@
 	});
 
 	$effect(() => {
-		if (canvasContainer) {
-			canvasContainer.addEventListener('wheel', handleWheel, { passive: false });
-			canvasContainer.addEventListener('touchstart', handleTouchStart, { passive: true });
-			canvasContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
-			return () => {
-				canvasContainer.removeEventListener('wheel', handleWheel);
-				canvasContainer.removeEventListener('touchstart', handleTouchStart);
-				canvasContainer.removeEventListener('touchmove', handleTouchMove);
-				if (animationFrame) cancelAnimationFrame(animationFrame);
-			};
-		}
+		// Use window for wheel to capture events over all elements
+		window.addEventListener('wheel', handleWheel, { passive: false });
+		canvasContainer?.addEventListener('touchstart', handleTouchStart, { passive: true });
+		canvasContainer?.addEventListener('touchmove', handleTouchMove, { passive: false });
+		return () => {
+			window.removeEventListener('wheel', handleWheel);
+			canvasContainer?.removeEventListener('touchstart', handleTouchStart);
+			canvasContainer?.removeEventListener('touchmove', handleTouchMove);
+			if (animationFrame) cancelAnimationFrame(animationFrame);
+		};
 	});
 
 	let viewpoints = $state<Viewpoint[]>([]);
@@ -176,13 +175,13 @@
 			<h1>Frej Sundqvist</h1>
 			<p>Software Developer</p>
 		</div>
+		<ScrollExpand progress={cameraPathProgress} startAt={0.7} endAt={0.95} maxSize="200px">
+			<div class="expanded-info">
+				<p>Full-stack developer passionate about 3D web experiences</p>
+				<p>Stockholm, Sweden</p>
+			</div>
+		</ScrollExpand>
 	</LiquidGlass>
-	<ScrollExpand progress={cameraPathProgress} startAt={0.7} endAt={0.95} maxSize="200px">
-		<div class="expanded-info">
-			<p>Full-stack developer passionate about 3D web experiences</p>
-			<p>Stockholm, Sweden</p>
-		</div>
-	</ScrollExpand>
 </ScrollPosition>
 
 <div class="desktop-only">
@@ -257,15 +256,19 @@
 	}
 
 	.expanded-info {
-		padding: 1em 0 0;
 		color: #fff;
 		font-family: system-ui, -apple-system, sans-serif;
 		text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+		white-space: nowrap;
 
 		p {
-			margin: 0 0 0.5em;
-			font-size: 0.9rem;
+			margin: 0 0 0.4em;
+			font-size: 0.85rem;
 			opacity: 0.9;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
 		}
 	}
 	.desktop-only {

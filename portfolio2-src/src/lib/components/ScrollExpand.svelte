@@ -55,6 +55,14 @@
 		max-height: var(--size);
 	}
 
+	.scroll-expand.vertical:not(.reverse) .expand-content {
+		padding-top: 0.75em;
+	}
+
+	.scroll-expand.vertical.reverse .expand-content {
+		padding-bottom: 0.75em;
+	}
+
 	.scroll-expand.horizontal {
 		max-width: var(--size);
 	}
