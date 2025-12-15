@@ -6,7 +6,6 @@ const DEFAULT_SETTINGS: SceneSettings = {
 	directionalIntensity: 3,
 	waterColor: '#3f1d1d',
 	skyElevation: 0,
-	skyAzimuth: 180,
 	skyTurbidity: 20,
 	fogColor: '#403e41',
 	fogDensity: 0.0019,

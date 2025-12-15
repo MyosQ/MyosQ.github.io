@@ -11,7 +11,6 @@ export interface SceneSettings {
 	directionalIntensity: number;
 	waterColor: string;
 	skyElevation: number;
-	skyAzimuth: number;
 	skyTurbidity: number;
 	fogColor: string;
 	fogDensity: number;

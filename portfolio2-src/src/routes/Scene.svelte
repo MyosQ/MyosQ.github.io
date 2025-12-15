@@ -60,7 +60,6 @@
 		directionalIntensity: number;
 		waterColor: string;
 		skyElevation: number;
-		skyAzimuth: number;
 		skyTurbidity: number;
 		fogColor: string;
 		fogDensity: number;
@@ -379,7 +378,7 @@
 		foliageStart: number;
 	}> = [];
 
-	const maxTrees = isMobile ? 25 : 35;
+	const maxTrees = isMobile ? 18 : 35;
 	for (let i = 0; i < 80; i++) {
 		const x = (treeRng() - 0.5) * 280;
 		const z = (treeRng() - 0.5) * 140;
@@ -397,10 +396,10 @@
 			branchLength: 0.6 + treeRng() * 1.2,
 			trunkBaseRadius: 0.12 + treeRng() * 0.06,
 			trunkTopRadius: 0.005 + treeRng() * 0.005,
-			branchTiers: 25 + Math.floor(treeRng() * 12),
+			branchTiers: isMobile ? 18 + Math.floor(treeRng() * 8) : 25 + Math.floor(treeRng() * 12),
 			branchesPerTier: 5 + Math.floor(treeRng() * 3),
 			branchDroop: 0.5 + treeRng() * 0.3,
-			needleDensity: 10 + Math.floor(treeRng() * 5),
+			needleDensity: isMobile ? 6 + Math.floor(treeRng() * 3) : 10 + Math.floor(treeRng() * 5),
 			needleSize: 0.5 + treeRng() * 0.25,
 			foliageStart: 0.1 + treeRng() * 0.1
 		});

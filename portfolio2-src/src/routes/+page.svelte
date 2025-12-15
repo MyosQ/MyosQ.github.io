@@ -4,6 +4,7 @@
 	import LightingTuner from '$lib/components/LightingTuner.svelte';
 	import LiquidGlass from '$lib/components/LiquidGlass.svelte';
 	import ScrollPosition from '$lib/components/ScrollPosition.svelte';
+	import ScrollExpand from '$lib/components/ScrollExpand.svelte';
 	import { browser } from '$app/environment';
 	import { KEYFRAMES, lerpSettings, type Viewpoint, type CameraState } from '$lib/config/scene';
 
@@ -176,6 +177,12 @@
 			<p>Software Developer</p>
 		</div>
 	</LiquidGlass>
+	<ScrollExpand progress={cameraPathProgress} startAt={0.7} endAt={0.95} maxSize="200px">
+		<div class="expanded-info">
+			<p>Full-stack developer passionate about 3D web experiences</p>
+			<p>Stockholm, Sweden</p>
+		</div>
+	</ScrollExpand>
 </ScrollPosition>
 
 <div class="desktop-only">
@@ -230,6 +237,7 @@
 		color: #fff;
 		text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 		font-family: system-ui, -apple-system, sans-serif;
+		white-space: nowrap;
 
 		h1 {
 			margin: 0 0 0.25em;
@@ -245,6 +253,19 @@
 			opacity: 0.85;
 			letter-spacing: 0.1em;
 			text-transform: uppercase;
+		}
+	}
+
+	.expanded-info {
+		padding: 1em 0 0;
+		color: #fff;
+		font-family: system-ui, -apple-system, sans-serif;
+		text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+
+		p {
+			margin: 0 0 0.5em;
+			font-size: 0.9rem;
+			opacity: 0.9;
 		}
 	}
 	.desktop-only {
