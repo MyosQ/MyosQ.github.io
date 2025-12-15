@@ -13,9 +13,13 @@
 		progress: number; // 0 to 1
 		from: Position;
 		to: Position;
+		endAt?: number; // progress value where position reaches 'to' (default 1)
 	}
 
-	let { children, progress, from, to }: Props = $props();
+	let { children, progress, from, to, endAt = 1 }: Props = $props();
+
+	// Normalize progress to reach destination by endAt
+	let normalizedProgress = $derived(Math.min(1, progress / endAt));
 
 	// Parse CSS value to number and unit
 	function parseValue(val: string): { num: number; unit: string } {
@@ -32,12 +36,12 @@
 		return `${av.num + (bv.num - av.num) * t}${av.unit}`;
 	}
 
-	let x = $derived(lerp(from.x, to.x, progress));
-	let y = $derived(lerp(from.y, to.y, progress));
+	let x = $derived(lerp(from.x, to.x, normalizedProgress));
+	let y = $derived(lerp(from.y, to.y, normalizedProgress));
 
 	// Interpolate anchor for transform-origin
-	let anchorX = $derived((from.anchorX ?? 0.5) + ((to.anchorX ?? 0.5) - (from.anchorX ?? 0.5)) * progress);
-	let anchorY = $derived((from.anchorY ?? 0.5) + ((to.anchorY ?? 0.5) - (from.anchorY ?? 0.5)) * progress);
+	let anchorX = $derived((from.anchorX ?? 0.5) + ((to.anchorX ?? 0.5) - (from.anchorX ?? 0.5)) * normalizedProgress);
+	let anchorY = $derived((from.anchorY ?? 0.5) + ((to.anchorY ?? 0.5) - (from.anchorY ?? 0.5)) * normalizedProgress);
 	let transformOrigin = $derived(`${anchorX * 100}% ${anchorY * 100}%`);
 </script>
 

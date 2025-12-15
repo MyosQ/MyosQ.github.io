@@ -169,13 +169,14 @@
 	progress={cameraPathProgress}
 	from={{ x: '50%', y: '50%', anchorX: 0.5, anchorY: 0.5 }}
 	to={{ x: '5%', y: '5%', anchorX: 0, anchorY: 0 }}
+	endAt={0.5}
 >
 	<LiquidGlass roundness={16} paddingX={1.5} paddingY={1} blur={12} interactive={false}>
 		<div class="glass-content">
 			<h1>Frej Sundqvist</h1>
 			<p>Software Developer</p>
 		</div>
-		<ScrollExpand progress={cameraPathProgress} startAt={0.7} endAt={0.95} maxSize="80px">
+		<ScrollExpand progress={cameraPathProgress} startAt={0.55} endAt={0.75} maxSize="80px">
 			<div class="expanded-info">
 				<p>Full-stack developer passionate about 3D web experiences</p>
 				<p>Stockholm, Sweden</p>
@@ -197,6 +198,11 @@
 					{#each KEYFRAMES as _, i}
 						<div class="marker" style="left: {(i / (KEYFRAMES.length - 1)) * 100}%"></div>
 					{/each}
+				</div>
+				<div class="event-markers">
+					<div class="event" style="left: 50%" title="Card arrives"></div>
+					<div class="event expand" style="left: 55%" title="Expand starts"></div>
+					<div class="event expand" style="left: 75%" title="Expand ends"></div>
 				</div>
 			</div>
 			<span>{(cameraPathProgress * 100).toFixed(0)}%</span>
@@ -313,6 +319,25 @@
 				background: rgba(255, 255, 255, 0.6);
 				transform: translate(-50%, -50%);
 				border-radius: 1px;
+			}
+			.event-markers {
+				position: absolute;
+				top: 100%;
+				left: 8px;
+				right: 8px;
+				height: 0;
+				pointer-events: none;
+			}
+			.event {
+				position: absolute;
+				width: 6px;
+				height: 6px;
+				background: #4af;
+				transform: translate(-50%, 4px);
+				border-radius: 50%;
+			}
+			.event.expand {
+				background: #fa4;
 			}
 		}
 
