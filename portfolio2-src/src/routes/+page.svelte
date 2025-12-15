@@ -3,6 +3,7 @@
 	import Scene from './Scene.svelte';
 	import LightingTuner from '$lib/components/LightingTuner.svelte';
 	import LiquidGlass from '$lib/components/LiquidGlass.svelte';
+	import ScrollPosition from '$lib/components/ScrollPosition.svelte';
 	import { browser } from '$app/environment';
 	import { KEYFRAMES, lerpSettings, type Viewpoint, type CameraState } from '$lib/config/scene';
 
@@ -164,14 +165,18 @@
 	</Canvas>
 </div>
 
-<div class="glass-center">
+<ScrollPosition
+	progress={cameraPathProgress}
+	from={{ x: '50%', y: '50%', anchorX: 0.5, anchorY: 0.5 }}
+	to={{ x: '5%', y: '5%', anchorX: 0, anchorY: 0 }}
+>
 	<LiquidGlass roundness={24} paddingX={3} paddingY={2} blur={14} interactive={false}>
 		<div class="glass-content">
 			<h1>Frej Sundqvist</h1>
 			<p>Software Developer</p>
 		</div>
 	</LiquidGlass>
-</div>
+</ScrollPosition>
 
 <div class="desktop-only">
 	<div class="camera-path">
@@ -218,15 +223,6 @@
 		position: fixed;
 		top: 0;
 		left: 0;
-	}
-
-	.glass-center {
-		position: fixed;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		z-index: 100;
-		pointer-events: none;
 	}
 
 	.glass-content {
