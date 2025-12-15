@@ -2,61 +2,38 @@
 	import { Canvas } from '@threlte/core';
 	import Scene from './Scene.svelte';
 	import LightingTuner from '$lib/components/LightingTuner.svelte';
+	import LiquidGlass from '$lib/components/LiquidGlass.svelte';
 	import { browser } from '$app/environment';
+	import { KEYFRAMES, lerpSettings, type Viewpoint, type CameraState } from '$lib/config/scene';
 
-	interface Viewpoint {
-		id: string;
-		name: string;
-		camera: { position: [number, number, number]; target: [number, number, number] };
-		settings: {
-			ambientColor: string; ambientIntensity: number; directionalIntensity: number;
-			waterColor: string; skyElevation: number; skyTurbidity: number;
-			fogColor: string; fogDensity: number; godRaysEnabled: boolean; godRaysIntensity: number;
-		};
-	}
-
-	// Animation keyframes (must match Scene.svelte)
-	const KEYFRAMES = [
-		{ settings: { ambientColor: "#403848", ambientIntensity: 0.18, directionalIntensity: 3, waterColor: "#3f1d1d", skyElevation: 5, skyTurbidity: 20, fogColor: "#403e41", fogDensity: 0.0019, godRaysEnabled: true, godRaysIntensity: 1 } },
-		{ settings: { ambientColor: "#403848", ambientIntensity: 0.18, directionalIntensity: 3, waterColor: "#3f1d1d", skyElevation: 0, skyTurbidity: 20, fogColor: "#403e41", fogDensity: 0.0019, godRaysEnabled: true, godRaysIntensity: 1 } }
-	];
-
-	function lerpColor(c1: string, c2: string, t: number): string {
-		const parse = (c: string) => [parseInt(c.slice(1,3),16), parseInt(c.slice(3,5),16), parseInt(c.slice(5,7),16)];
-		const [r1,g1,b1] = parse(c1), [r2,g2,b2] = parse(c2);
-		const r = Math.round(r1 + (r2-r1)*t), g = Math.round(g1 + (g2-g1)*t), bl = Math.round(b1 + (b2-b1)*t);
-		return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${bl.toString(16).padStart(2,'0')}`;
-	}
-
-	let ambientColor = $state(KEYFRAMES[0].settings.ambientColor);
-	let ambientIntensity = $state(KEYFRAMES[0].settings.ambientIntensity);
-	let directionalIntensity = $state(KEYFRAMES[0].settings.directionalIntensity);
-	let waterColor = $state(KEYFRAMES[0].settings.waterColor);
-	let skyElevation = $state(KEYFRAMES[0].settings.skyElevation);
-	let skyTurbidity = $state(KEYFRAMES[0].settings.skyTurbidity);
-	let fogColor = $state(KEYFRAMES[0].settings.fogColor);
-	let fogDensity = $state(KEYFRAMES[0].settings.fogDensity);
-	let godRaysEnabled = $state(KEYFRAMES[0].settings.godRaysEnabled);
-	let godRaysIntensity = $state(KEYFRAMES[0].settings.godRaysIntensity);
+	const initial = KEYFRAMES[0].settings;
+	let ambientColor = $state(initial.ambientColor);
+	let ambientIntensity = $state(initial.ambientIntensity);
+	let directionalIntensity = $state(initial.directionalIntensity);
+	let waterColor = $state(initial.waterColor);
+	let skyElevation = $state(initial.skyElevation);
+	let skyTurbidity = $state(initial.skyTurbidity);
+	let fogColor = $state(initial.fogColor);
+	let fogDensity = $state(initial.fogDensity);
+	let godRaysEnabled = $state(initial.godRaysEnabled);
+	let godRaysIntensity = $state(initial.godRaysIntensity);
 
 	let cameraPathEnabled = $state(true);
 	let cameraPathProgress = $state(0);
 	let cameraPathValue = $derived(cameraPathEnabled ? cameraPathProgress : undefined);
 
-	// Update settings when scrolling on path
 	$effect(() => {
 		if (cameraPathEnabled) {
-			const t = cameraPathProgress;
-			const a = KEYFRAMES[0].settings, b = KEYFRAMES[1].settings;
-			ambientColor = lerpColor(a.ambientColor, b.ambientColor, t);
-			ambientIntensity = a.ambientIntensity + (b.ambientIntensity - a.ambientIntensity) * t;
-			directionalIntensity = a.directionalIntensity + (b.directionalIntensity - a.directionalIntensity) * t;
-			waterColor = lerpColor(a.waterColor, b.waterColor, t);
-			skyElevation = a.skyElevation + (b.skyElevation - a.skyElevation) * t;
-			skyTurbidity = a.skyTurbidity + (b.skyTurbidity - a.skyTurbidity) * t;
-			fogColor = lerpColor(a.fogColor, b.fogColor, t);
-			fogDensity = a.fogDensity + (b.fogDensity - a.fogDensity) * t;
-			godRaysIntensity = a.godRaysIntensity + (b.godRaysIntensity - a.godRaysIntensity) * t;
+			const s = lerpSettings(cameraPathProgress);
+			ambientColor = s.ambientColor;
+			ambientIntensity = s.ambientIntensity;
+			directionalIntensity = s.directionalIntensity;
+			waterColor = s.waterColor;
+			skyElevation = s.skyElevation;
+			skyTurbidity = s.skyTurbidity;
+			fogColor = s.fogColor;
+			fogDensity = s.fogDensity;
+			godRaysIntensity = s.godRaysIntensity;
 		}
 	});
 
@@ -115,10 +92,9 @@
 		}
 	});
 
-	// Viewpoints
 	let viewpoints = $state<Viewpoint[]>([]);
-	let getCameraState: (() => { position: [number, number, number]; target: [number, number, number] }) | undefined;
-	let setCameraState = $state<{ position: [number, number, number]; target: [number, number, number] } | null>(null);
+	let getCameraState: (() => CameraState) | undefined;
+	let setCameraState = $state<CameraState | null>(null);
 
 	$effect(() => {
 		if (browser) {
@@ -166,7 +142,7 @@
 		navigator.clipboard.writeText(JSON.stringify({ camera: vp.camera, settings: vp.settings }, null, 2));
 	}
 
-	function handleCameraReady(getter: () => { position: [number, number, number]; target: [number, number, number] }) {
+	function handleCameraReady(getter: () => CameraState) {
 		getCameraState = getter;
 	}
 </script>
@@ -188,6 +164,15 @@
 	</Canvas>
 </div>
 
+<div class="glass-center">
+	<LiquidGlass roundness={24} paddingX={3} paddingY={2} blur={14} interactive={false}>
+		<div class="glass-content">
+			<h1>Frej Sundqvist</h1>
+			<p>Software Developer</p>
+		</div>
+	</LiquidGlass>
+</div>
+
 <div class="desktop-only">
 	<div class="camera-path">
 		<label>
@@ -195,7 +180,14 @@
 			Path
 		</label>
 		{#if cameraPathEnabled}
-			<input type="range" min="0" max="1" step="0.001" bind:value={cameraPathProgress} />
+			<div class="slider-container">
+				<input type="range" min="0" max="1" step="0.001" bind:value={cameraPathProgress} />
+				<div class="keyframe-markers">
+					{#each KEYFRAMES as _, i}
+						<div class="marker" style="left: {(i / (KEYFRAMES.length - 1)) * 100}%"></div>
+					{/each}
+				</div>
+			</div>
 			<span>{(cameraPathProgress * 100).toFixed(0)}%</span>
 		{/if}
 	</div>
@@ -227,69 +219,126 @@
 		top: 0;
 		left: 0;
 	}
+
+	.glass-center {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		z-index: 100;
+		pointer-events: none;
+	}
+
+	.glass-content {
+		text-align: center;
+		color: #fff;
+		text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+		font-family: system-ui, -apple-system, sans-serif;
+
+		h1 {
+			margin: 0 0 0.25em;
+			font-size: 2.5rem;
+			font-weight: 300;
+			letter-spacing: 0.05em;
+		}
+
+		p {
+			margin: 0;
+			font-size: 1rem;
+			font-weight: 400;
+			opacity: 0.85;
+			letter-spacing: 0.1em;
+			text-transform: uppercase;
+		}
+	}
 	.desktop-only {
 		display: contents;
+
+		& .camera-path {
+			position: fixed;
+			bottom: 20px;
+			left: 50%;
+			transform: translateX(-50%);
+			background: rgba(0, 0, 0, 0.8);
+			padding: 10px 20px;
+			border-radius: 8px;
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			color: #fff;
+			font-family: monospace;
+			font-size: 14px;
+			z-index: 1000;
+
+			label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+			span { width: 40px; text-align: right; }
+
+			.slider-container {
+				position: relative;
+				width: 300px;
+				input[type="range"] { width: 100%; }
+			}
+			.keyframe-markers {
+				position: absolute;
+				top: 50%;
+				left: 8px;
+				right: 8px;
+				height: 0;
+				pointer-events: none;
+			}
+			.marker {
+				position: absolute;
+				width: 2px;
+				height: 12px;
+				background: rgba(255, 255, 255, 0.6);
+				transform: translate(-50%, -50%);
+				border-radius: 1px;
+			}
+		}
+
+		& .viewpoints {
+			position: fixed;
+			bottom: 20px;
+			left: 20px;
+			background: rgba(0, 0, 0, 0.8);
+			padding: 8px;
+			border-radius: 8px;
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+			color: #fff;
+			font-family: monospace;
+			font-size: 12px;
+			z-index: 1000;
+			max-height: 300px;
+			overflow-y: auto;
+
+			.save-btn {
+				background: #2a6; border: none; color: #fff; padding: 6px 12px;
+				cursor: pointer; border-radius: 4px; font-family: inherit;
+				&:hover { background: #3b7; }
+			}
+			.viewpoint { display: flex; gap: 4px; }
+			.load-btn {
+				flex: 1; background: #444; border: none; color: #fff; padding: 4px 8px;
+				cursor: pointer; border-radius: 3px; text-align: left; font-family: inherit;
+				&:hover { background: #555; }
+			}
+			.copy-btn {
+				background: #446; border: none; color: #fff; padding: 4px 8px;
+				cursor: pointer; border-radius: 3px; font-family: inherit;
+				&:hover { background: #558; }
+			}
+			.delete-btn {
+				background: #633; border: none; color: #fff; padding: 4px 8px;
+				cursor: pointer; border-radius: 3px; font-family: inherit;
+				&:hover { background: #844; }
+			}
+		}
 	}
 	@media (max-width: 768px) {
 		.desktop-only {
 			display: none;
 		}
 	}
-	.camera-path {
-		position: fixed;
-		bottom: 20px;
-		left: 50%;
-		transform: translateX(-50%);
-		background: rgba(0, 0, 0, 0.8);
-		padding: 10px 20px;
-		border-radius: 8px;
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		color: #fff;
-		font-family: monospace;
-		font-size: 14px;
-		z-index: 1000;
-	}
-	.camera-path input[type="range"] { width: 300px; }
-	.camera-path label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
-	.camera-path span { width: 40px; text-align: right; }
-	.viewpoints {
-		position: fixed;
-		bottom: 20px;
-		left: 20px;
-		background: rgba(0, 0, 0, 0.8);
-		padding: 8px;
-		border-radius: 8px;
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
-		color: #fff;
-		font-family: monospace;
-		font-size: 12px;
-		z-index: 1000;
-		max-height: 300px;
-		overflow-y: auto;
-	}
-	.viewpoints .save-btn {
-		background: #2a6; border: none; color: #fff; padding: 6px 12px;
-		cursor: pointer; border-radius: 4px; font-family: inherit;
-	}
-	.viewpoints .save-btn:hover { background: #3b7; }
-	.viewpoints .viewpoint { display: flex; gap: 4px; }
-	.viewpoints .load-btn {
-		flex: 1; background: #444; border: none; color: #fff; padding: 4px 8px;
-		cursor: pointer; border-radius: 3px; text-align: left; font-family: inherit;
-	}
-	.viewpoints .load-btn:hover { background: #555; }
-	.viewpoints .copy-btn {
-		background: #446; border: none; color: #fff; padding: 4px 8px;
-		cursor: pointer; border-radius: 3px; font-family: inherit;
-	}
-	.viewpoints .copy-btn:hover { background: #558; }
-	.viewpoints .delete-btn {
-		background: #633; border: none; color: #fff; padding: 4px 8px;
-		cursor: pointer; border-radius: 3px; font-family: inherit;
-	}
-	.viewpoints .delete-btn:hover { background: #844; }
 </style>

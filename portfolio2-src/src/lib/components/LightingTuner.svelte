@@ -5,6 +5,7 @@
 		directionalIntensity: number;
 		waterColor: string;
 		skyElevation: number;
+		skyAzimuth: number;
 		skyTurbidity: number;
 		fogColor: string;
 		fogDensity: number;
@@ -19,6 +20,7 @@
 		directionalIntensity = $bindable(),
 		waterColor = $bindable(),
 		skyElevation = $bindable(),
+		skyAzimuth = $bindable(),
 		skyTurbidity = $bindable(),
 		fogColor = $bindable(),
 		fogDensity = $bindable(),

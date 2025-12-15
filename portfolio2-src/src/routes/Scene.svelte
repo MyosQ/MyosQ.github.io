@@ -11,8 +11,11 @@
 	import PostProcessing from '$lib/components/PostProcessing.svelte';
 	import { mulberry32 } from '$lib/utils/random';
 	import { browser } from '$app/environment';
+	import { KEYFRAMES, lerpSettings, getPathProgress, type CameraState } from '$lib/config/scene';
 
 	extend({ Water });
+
+	const isMobile = browser && window.matchMedia('(max-width: 768px)').matches;
 
 	let controlsRef: ThreeOrbitControls | undefined;
 	let cameraRef: THREE.PerspectiveCamera | undefined;
@@ -57,31 +60,19 @@
 		directionalIntensity: number;
 		waterColor: string;
 		skyElevation: number;
+		skyAzimuth: number;
 		skyTurbidity: number;
 		fogColor: string;
 		fogDensity: number;
 		godRaysEnabled?: boolean;
 		godRaysIntensity?: number;
 		cameraPathProgress?: number;
-		onCameraReady?: (getter: () => { position: [number, number, number]; target: [number, number, number] }) => void;
-		setCameraState?: { position: [number, number, number]; target: [number, number, number] } | null;
+		onCameraReady?: (getter: () => CameraState) => void;
+		setCameraState?: CameraState | null;
 	}
 
 	let props: Props = $props();
 
-	// Animation keyframes (start and end only - camera path generated as arc)
-	const KEYFRAMES = [
-		{
-			camera: { position: [141.37, 20.77, 509.17], target: [10.2, -18.6, 0.5] },
-			settings: { ambientColor: "#403848", ambientIntensity: 0.18, directionalIntensity: 3, waterColor: "#3f1d1d", skyElevation: 5, skyTurbidity: 20, fogColor: "#403e41", fogDensity: 0.0019, godRaysEnabled: true, godRaysIntensity: 1 }
-		},
-		{
-			camera: { position: [-164.67, 20.77, 495.85], target: [10.2, -18.6, 0.5] },
-			settings: { ambientColor: "#403848", ambientIntensity: 0.18, directionalIntensity: 3, waterColor: "#3f1d1d", skyElevation: 0, skyTurbidity: 20, fogColor: "#403e41", fogDensity: 0.0019, godRaysEnabled: true, godRaysIntensity: 1 }
-		}
-	] as const;
-
-	// Generate arc path between keyframes (constant radius from center)
 	function generateArcPath(start: readonly number[], end: readonly number[], segments: number): THREE.Vector3[] {
 		const startAngle = Math.atan2(start[0], start[2]);
 		const endAngle = Math.atan2(end[0], end[2]);
@@ -105,35 +96,19 @@
 	}
 
 	const cameraPath = new THREE.CatmullRomCurve3(
-		generateArcPath(KEYFRAMES[0].camera.position, KEYFRAMES[1].camera.position, 20),
-		false
+		KEYFRAMES.slice(0, -1).flatMap((kf, i) => {
+			const pts = generateArcPath(kf.camera.position, KEYFRAMES[i + 1].camera.position, 20);
+			return i === 0 ? pts : pts.slice(1); // avoid duplicate points at segment boundaries
+		}),
+		false,
+		'chordal' // reduces overshoot at sharp direction changes
 	);
 
 	const targetPath = new THREE.CatmullRomCurve3(
 		KEYFRAMES.map(kf => new THREE.Vector3(...kf.camera.target)),
-		false
+		false,
+		'chordal'
 	);
-
-	function lerpColor(a: string, b: string, t: number): string {
-		const ca = new THREE.Color(a), cb = new THREE.Color(b);
-		ca.lerp(cb, t);
-		return '#' + ca.getHexString();
-	}
-
-	function lerpSettings(t: number) {
-		const a = KEYFRAMES[0].settings, b = KEYFRAMES[1].settings;
-		return {
-			ambientColor: lerpColor(a.ambientColor, b.ambientColor, t),
-			ambientIntensity: a.ambientIntensity + (b.ambientIntensity - a.ambientIntensity) * t,
-			directionalIntensity: a.directionalIntensity + (b.directionalIntensity - a.directionalIntensity) * t,
-			waterColor: lerpColor(a.waterColor, b.waterColor, t),
-			skyElevation: a.skyElevation + (b.skyElevation - a.skyElevation) * t,
-			skyTurbidity: a.skyTurbidity + (b.skyTurbidity - a.skyTurbidity) * t,
-			fogColor: lerpColor(a.fogColor, b.fogColor, t),
-			fogDensity: a.fogDensity + (b.fogDensity - a.fogDensity) * t,
-			godRaysIntensity: a.godRaysIntensity + (b.godRaysIntensity - a.godRaysIntensity) * t
-		};
-	}
 
 	let pathModeActive = $derived((props.cameraPathProgress ?? -1) >= 0);
 	let interpolatedSettings = $derived(pathModeActive ? lerpSettings(props.cameraPathProgress ?? 0) : null);
@@ -142,18 +117,14 @@
 	let directionalLightRef: THREE.DirectionalLight | undefined;
 	let fogRef: THREE.FogExp2 | undefined;
 
-	// Update camera position and settings along path
 	$effect(() => {
-		if (pathModeActive && cameraRef && controlsRef) {
-			const t = props.cameraPathProgress ?? 0;
-			const pos = cameraPath.getPointAt(t);
-			const target = targetPath.getPointAt(t);
-			cameraRef.position.copy(pos);
-			controlsRef.target.copy(target);
+		if (pathModeActive && cameraRef && controlsRef && interpolatedSettings) {
+			const pathT = getPathProgress(props.cameraPathProgress ?? 0);
+			cameraRef.position.copy(cameraPath.getPointAt(pathT));
+			controlsRef.target.copy(targetPath.getPointAt(pathT));
 			controlsRef.update();
 
-			// Interpolate settings
-			const s = lerpSettings(t);
+			const s = interpolatedSettings;
 			if (ambientLightRef) {
 				ambientLightRef.color.set(s.ambientColor);
 				ambientLightRef.intensity = s.ambientIntensity;
@@ -408,6 +379,7 @@
 		foliageStart: number;
 	}> = [];
 
+	const maxTrees = isMobile ? 25 : 35;
 	for (let i = 0; i < 80; i++) {
 		const x = (treeRng() - 0.5) * 280;
 		const z = (treeRng() - 0.5) * 140;
@@ -433,67 +405,68 @@
 			foliageStart: 0.1 + treeRng() * 0.1
 		});
 
-		if (trees.length >= 35) break;
+		if (trees.length >= maxTrees) break;
 	}
 
-	// Create grass blade geometry
-	function createGrassBladeGeometry(): THREE.BufferGeometry {
-		const geometry = new THREE.BufferGeometry();
-		// Short grass blade - 2x higher
-		const vertices = new Float32Array([
-			-0.08, 0, 0,
-			0.08, 0, 0,
-			0, 1.2, 0
-		]);
-		geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-		geometry.computeVertexNormals();
-		return geometry;
+	// Create grass blade geometry (desktop only)
+	let grassMesh: THREE.InstancedMesh | null = null;
+
+	if (!isMobile) {
+		function createGrassBladeGeometry(): THREE.BufferGeometry {
+			const geometry = new THREE.BufferGeometry();
+			const vertices = new Float32Array([
+				-0.08, 0, 0,
+				0.08, 0, 0,
+				0, 1.2, 0
+			]);
+			geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+			geometry.computeVertexNormals();
+			return geometry;
+		}
+
+		const grassRng = mulberry32(77777);
+		const grassCount = 40000;
+		const grassGeometry = createGrassBladeGeometry();
+		const grassMaterial = new THREE.MeshBasicMaterial({
+			color: '#020a05',
+			side: THREE.DoubleSide
+		});
+		grassMesh = new THREE.InstancedMesh(grassGeometry, grassMaterial, grassCount);
+
+		const grassMatrix = new THREE.Matrix4();
+		const grassColors = new Float32Array(grassCount * 3);
+		let grassIndex = 0;
+
+		for (let i = 0; i < 250000 && grassIndex < grassCount; i++) {
+			const x = (grassRng() - 0.5) * 280;
+			const z = (grassRng() - 0.5) * 160;
+
+			if (!isOnIsland(x, -z)) continue;
+			const distFromEdge = distToIslandEdge(x, -z);
+			if (distFromEdge < 3) continue;
+
+			const y = getTerrainHeight(x, -z);
+			const scale = 1.1 + grassRng() * 0.6;
+			const rotY = grassRng() * Math.PI * 2;
+			const tilt = (grassRng() - 0.5) * 0.2;
+
+			grassMatrix.makeRotationY(rotY);
+			grassMatrix.multiply(new THREE.Matrix4().makeRotationX(tilt));
+			grassMatrix.scale(new THREE.Vector3(scale, scale * (0.6 + grassRng() * 0.4), scale));
+			grassMatrix.setPosition(x, y, z);
+			grassMesh.setMatrixAt(grassIndex, grassMatrix);
+
+			const colorVar = grassRng() * 0.1;
+			grassColors[grassIndex * 3] = 0.008 + colorVar * 0.008;
+			grassColors[grassIndex * 3 + 1] = 0.03 + colorVar * 0.02;
+			grassColors[grassIndex * 3 + 2] = 0.015 + colorVar * 0.008;
+
+			grassIndex++;
+		}
+
+		grassMesh.instanceMatrix.needsUpdate = true;
+		grassMesh.geometry.setAttribute('color', new THREE.InstancedBufferAttribute(grassColors, 3));
 	}
-
-	// Generate grass instances - dense and dark
-	const grassRng = mulberry32(77777);
-	const grassCount = 40000;
-	const grassGeometry = createGrassBladeGeometry();
-	const grassMaterial = new THREE.MeshBasicMaterial({
-		color: '#020a05',
-		side: THREE.DoubleSide
-	});
-	const grassMesh = new THREE.InstancedMesh(grassGeometry, grassMaterial, grassCount);
-
-	const grassMatrix = new THREE.Matrix4();
-	const grassColors = new Float32Array(grassCount * 3);
-	let grassIndex = 0;
-
-	for (let i = 0; i < 250000 && grassIndex < grassCount; i++) {
-		const x = (grassRng() - 0.5) * 280;
-		const z = (grassRng() - 0.5) * 160;
-
-		if (!isOnIsland(x, -z)) continue;
-		const distFromEdge = distToIslandEdge(x, -z);
-		if (distFromEdge < 3) continue; // No grass at water edge
-
-		const y = getTerrainHeight(x, -z);
-		const scale = 1.1 + grassRng() * 0.6;
-		const rotY = grassRng() * Math.PI * 2;
-		const tilt = (grassRng() - 0.5) * 0.2;
-
-		grassMatrix.makeRotationY(rotY);
-		grassMatrix.multiply(new THREE.Matrix4().makeRotationX(tilt));
-		grassMatrix.scale(new THREE.Vector3(scale, scale * (0.6 + grassRng() * 0.4), scale));
-		grassMatrix.setPosition(x, y, z);
-		grassMesh.setMatrixAt(grassIndex, grassMatrix);
-
-		// Dark green grass color
-		const colorVar = grassRng() * 0.1;
-		grassColors[grassIndex * 3] = 0.008 + colorVar * 0.008;
-		grassColors[grassIndex * 3 + 1] = 0.03 + colorVar * 0.02;
-		grassColors[grassIndex * 3 + 2] = 0.015 + colorVar * 0.008;
-
-		grassIndex++;
-	}
-
-	grassMesh.instanceMatrix.needsUpdate = true;
-	grassMesh.geometry.setAttribute('color', new THREE.InstancedBufferAttribute(grassColors, 3));
 </script>
 
 <T.PerspectiveCamera
@@ -589,7 +562,9 @@
 	/>
 {/each}
 
-<T is={grassMesh} />
+{#if grassMesh}
+	<T is={grassMesh} />
+{/if}
 
 {#each trees as tree (tree.seed)}
 	<FirTree
