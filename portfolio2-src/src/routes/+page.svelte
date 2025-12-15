@@ -71,6 +71,19 @@
 		targetProgress = Math.max(0, Math.min(1, targetProgress + delta));
 	}
 
+	let touchStartY = 0;
+	function handleTouchStart(e: TouchEvent) {
+		touchStartY = e.touches[0].clientY;
+	}
+	function handleTouchMove(e: TouchEvent) {
+		if (!cameraPathEnabled) return;
+		e.preventDefault();
+		const touchY = e.touches[0].clientY;
+		const delta = (touchStartY - touchY) * 0.002;
+		targetProgress = Math.max(0, Math.min(1, targetProgress + delta));
+		touchStartY = touchY;
+	}
+
 	function animateProgress() {
 		const diff = targetProgress - cameraPathProgress;
 		if (Math.abs(diff) > 0.0001) {
@@ -91,8 +104,12 @@
 	$effect(() => {
 		if (canvasContainer) {
 			canvasContainer.addEventListener('wheel', handleWheel, { passive: false });
+			canvasContainer.addEventListener('touchstart', handleTouchStart, { passive: true });
+			canvasContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
 			return () => {
 				canvasContainer.removeEventListener('wheel', handleWheel);
+				canvasContainer.removeEventListener('touchstart', handleTouchStart);
+				canvasContainer.removeEventListener('touchmove', handleTouchMove);
 				if (animationFrame) cancelAnimationFrame(animationFrame);
 			};
 		}
