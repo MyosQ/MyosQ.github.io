@@ -62,12 +62,10 @@
 		--ease: cubic-bezier(0.25, 1, 0.5, 1);
 		--duration: 350ms;
 		--border: calc(1px * var(--thickness));
-
 		position: relative;
 		display: inline-block;
 	}
 
-	/* Soft diffuse shadow beneath glass */
 	.shadow {
 		position: absolute;
 		inset: 0;
@@ -81,46 +79,31 @@
 		transition: all var(--duration) var(--ease);
 	}
 
-	/* Main glass surface */
 	.glass {
 		position: relative;
 		z-index: 1;
 		border-radius: var(--roundness);
 		overflow: hidden;
-
-		/* Frosted glass effect - key to glassmorphism */
 		background: linear-gradient(
 			135deg,
 			rgba(255, 255, 255, 0.12) 0%,
 			rgba(255, 255, 255, 0.06) 50%,
 			rgba(255, 255, 255, 0.03) 100%
 		);
-
 		backdrop-filter: blur(var(--blur)) saturate(1.2);
 		-webkit-backdrop-filter: blur(var(--blur)) saturate(1.2);
-
-		/* Layered shadows for depth */
 		box-shadow:
-			/* Outer glow - subtle ambient */
 			0 0 calc(40px * var(--thickness)) rgba(255, 255, 255, 0.05),
-			/* Drop shadow */
 			0 calc(4px * var(--thickness)) calc(24px * var(--thickness)) rgba(0, 0, 0, 0.1),
-			/* Inner top highlight - light from above */
 			inset 0 calc(1px * var(--thickness)) calc(1px * var(--thickness)) rgba(255, 255, 255, 0.4),
-			/* Inner bottom shadow - glass thickness illusion */
 			inset 0 calc(-1px * var(--thickness)) calc(2px * var(--thickness)) rgba(0, 0, 0, 0.1),
-			/* Subtle inner glow */
 			inset 0 0 calc(20px * var(--thickness)) rgba(255, 255, 255, 0.05);
-
-		/* Border for glass edge definition */
 		border: var(--border) solid rgba(255, 255, 255, 0.18);
 		border-top-color: rgba(255, 255, 255, 0.35);
 		border-left-color: rgba(255, 255, 255, 0.25);
-
 		transition: all var(--duration) var(--ease);
 	}
 
-	/* Specular highlight - simulates light reflection on glass surface */
 	.glass::before {
 		content: '';
 		position: absolute;
@@ -137,7 +120,6 @@
 		transition: opacity var(--duration) var(--ease);
 	}
 
-	/* Tint overlay - colored glass effect */
 	.glass::after {
 		content: '';
 		position: absolute;
@@ -152,20 +134,13 @@
 		mix-blend-mode: overlay;
 	}
 
-	/* Edge light - simulates glass thickness catching light */
 	.edge-light {
 		position: absolute;
 		inset: 0;
 		border-radius: inherit;
 		pointer-events: none;
 		z-index: 2;
-
-		/* Top edge highlight */
-		background: linear-gradient(
-			to bottom,
-			rgba(255, 255, 255, 0.25) 0%,
-			transparent 3%
-		);
+		background: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, transparent 3%);
 	}
 
 	.edge-light::before {
@@ -173,12 +148,7 @@
 		position: absolute;
 		inset: 0;
 		border-radius: inherit;
-		/* Left edge highlight */
-		background: linear-gradient(
-			to right,
-			rgba(255, 255, 255, 0.15) 0%,
-			transparent 3%
-		);
+		background: linear-gradient(to right, rgba(255, 255, 255, 0.15) 0%, transparent 3%);
 	}
 
 	.edge-light::after {
@@ -186,15 +156,9 @@
 		position: absolute;
 		inset: 0;
 		border-radius: inherit;
-		/* Bottom edge shadow */
-		background: linear-gradient(
-			to top,
-			rgba(0, 0, 0, 0.08) 0%,
-			transparent 4%
-		);
+		background: linear-gradient(to top, rgba(0, 0, 0, 0.08) 0%, transparent 4%);
 	}
 
-	/* Content wrapper */
 	.content {
 		position: relative;
 		z-index: 3;
@@ -202,7 +166,6 @@
 		padding-block: var(--py);
 	}
 
-	/* Interactive states */
 	.interactive .glass {
 		cursor: pointer;
 	}
