@@ -8,37 +8,15 @@
 	import FirTree from '$lib/components/FirTree.svelte';
 	import PineTree from '$lib/components/PineTree.svelte';
 	import { mulberry32 } from '$lib/utils/random';
-	import { browser } from '$app/environment';
+	import { parseCameraHash, createCameraHashSaver } from '$lib/utils/camera';
+	import { distToPolygonEdge, isInsidePolygon } from '$lib/utils/polygon';
 
 	extend({ Water });
 
-
-	// Camera URL hash persistence
 	let controlsRef: ThreeOrbitControls | undefined;
 	let cameraRef: THREE.PerspectiveCamera | undefined;
+	const saveCameraHash = createCameraHashSaver(() => cameraRef, () => controlsRef);
 
-	function parseCameraHash(): { pos: [number, number, number]; target: [number, number, number] } | null {
-		if (!browser) return null;
-		const hash = window.location.hash;
-		if (!hash.startsWith('#cam=')) return null;
-		const parts = hash.slice(5).split(',').map(Number);
-		if (parts.length !== 6 || parts.some(isNaN)) return null;
-		return {
-			pos: [parts[0], parts[1], parts[2]],
-			target: [parts[3], parts[4], parts[5]]
-		};
-	}
-
-	function saveCameraHash() {
-		if (!controlsRef || !cameraRef) return;
-		const p = cameraRef.position;
-		const t = controlsRef.target;
-		const round = (n: number) => Math.round(n * 10) / 10;
-		const hash = `#cam=${round(p.x)},${round(p.y)},${round(p.z)},${round(t.x)},${round(t.y)},${round(t.z)}`;
-		history.replaceState(null, '', hash);
-	}
-
-	// Scene configuration
 	const CONFIG = {
 		sky: { elevation: 2, azimuth: 90, turbidity: 10, rayleigh: 0.5, mie: 0.1 },
 		terrain: { size: 2000, color: '#1a2e1a' },
@@ -53,58 +31,13 @@
 	const initialTarget: [number, number, number] = initialCamera?.target ?? [200, 80, 0];
 
 	const lakeCoords = lakeGeoJson.geometry.coordinates[0] as [number, number][];
+	const distToLakeEdge = (px: number, pz: number) => distToPolygonEdge(px, pz, lakeCoords);
+	const isInsideLake = (px: number, pz: number) => isInsidePolygon(px, pz, lakeCoords);
 
-	// Distance to nearest lake edge segment
-	// Note: lakeCoords is GeoJSON format where first/last points are identical
-	function distToLakeEdge(px: number, pz: number): number {
-		let minDist = Infinity;
-		const n = lakeCoords.length - 1; // Exclude duplicate closing point
-
-		for (let i = 0; i < n; i++) {
-			const ax = lakeCoords[i][0], az = lakeCoords[i][1];
-			const bx = lakeCoords[(i + 1) % n][0], bz = lakeCoords[(i + 1) % n][1];
-			const dx = bx - ax, dz = bz - az;
-			const len2 = dx * dx + dz * dz;
-			if (len2 === 0) continue; // Skip degenerate edges
-			const t = Math.max(0, Math.min(1, ((px - ax) * dx + (pz - az) * dz) / len2));
-			const nearX = ax + t * dx, nearZ = az + t * dz;
-			const dist = Math.sqrt((px - nearX) ** 2 + (pz - nearZ) ** 2);
-			if (dist < minDist) minDist = dist;
-		}
-		return minDist;
-	}
-
-	// Point-in-polygon check (ray casting algorithm)
-	// Note: lakeCoords is GeoJSON format where first/last points are identical (closed polygon)
-	// We skip the duplicate closing point by using length - 1
-	function isInsideLake(px: number, pz: number): boolean {
-		let inside = false;
-		const n = lakeCoords.length - 1; // Exclude duplicate closing point
-
-		for (let i = 0, j = n - 1; i < n; j = i++) {
-			const ix = lakeCoords[i][0], iz = lakeCoords[i][1]; // Current vertex
-			const jx = lakeCoords[j][0], jz = lakeCoords[j][1]; // Previous vertex
-
-			// Check if edge crosses the horizontal ray from point to +infinity
-			const edgeCrossesRay = (iz > pz) !== (jz > pz);
-			if (edgeCrossesRay) {
-				// Calculate x-coordinate where edge intersects the ray
-				const intersectX = (jx - ix) * (pz - iz) / (jz - iz) + ix;
-				if (px < intersectX) {
-					inside = !inside;
-				}
-			}
-		}
-		return inside;
-	}
-
-	// Check if position is too close to lake (inside or within buffer)
 	function tooCloseToLake(x: number, z: number, buffer: number): boolean {
-		if (isInsideLake(x, z)) return true;
-		return distToLakeEdge(x, z) < buffer;
+		return isInsideLake(x, z) || distToLakeEdge(x, z) < buffer;
 	}
 
-	// Simple noise function for terrain
 	function noise2D(x: number, z: number, seed: number): number {
 		const n = Math.sin(x * 0.01 + seed) * Math.cos(z * 0.01 + seed * 1.3) +
 		          Math.sin(x * 0.005 + z * 0.008 + seed * 0.7) * 0.5 +
@@ -112,7 +45,6 @@
 		return n / 1.75;
 	}
 
-	// Get terrain height at world position (x, z)
 	function getTerrainHeight(x: number, z: number): number {
 		const distFromEdge = distToLakeEdge(x, z);
 		const distFactor = Math.min(1, distFromEdge / 300);
@@ -121,20 +53,18 @@
 		return baseHeight + variation;
 	}
 
-	// Create terrain with dense vertex grid
 	function createTerrainGeometry(): THREE.BufferGeometry {
 		const size = CONFIG.terrain.size;
-		const segments = 100; // Dense grid for accurate height sampling
+		const segments = 100;
 
 		const geometry = new THREE.PlaneGeometry(size, size, segments, segments);
 		const positions = geometry.attributes.position;
 
 		for (let i = 0; i < positions.count; i++) {
 			const x = positions.getX(i);
-			const z = positions.getY(i); // PlaneGeometry is in XY, we rotate to XZ
+			const z = positions.getY(i);
 
 			if (isInsideLake(x, z)) {
-				// Sink lake vertices below water
 				positions.setZ(i, -5);
 			} else {
 				positions.setZ(i, getTerrainHeight(x, z));
@@ -192,7 +122,6 @@
 		}
 	});
 
-	// Generate trees around lake (not inside)
 	const treeRng = mulberry32(12345);
 	const trees: Array<{
 		position: [number, number, number];
@@ -217,8 +146,6 @@
 		const z = Math.sin(angle) * dist;
 		const scale = 6 + treeRng() * 12;
 
-		// Buffer based on tree size to keep foliage out of lake
-		// Note: lake/terrain functions use shape coords where shapeY = -worldZ
 		if (tooCloseToLake(x, -z, scale * 3)) continue;
 
 		trees.push({
@@ -238,7 +165,6 @@
 		});
 	}
 
-	// Generate pine trees (offset from fir trees)
 	const pineRng = mulberry32(67890);
 	const pines: Array<{
 		position: [number, number, number];
@@ -262,8 +188,6 @@
 		const z = Math.sin(angle) * dist;
 		const scale = 5 + pineRng() * 10;
 
-		// Buffer based on tree size to keep foliage out of lake
-		// Note: lake/terrain functions use shape coords where shapeY = -worldZ
 		if (tooCloseToLake(x, -z, scale * 2.5)) continue;
 
 		const height = 4 + pineRng() * 8;

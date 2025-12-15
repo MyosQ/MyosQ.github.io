@@ -2,7 +2,7 @@
 	import { T } from '@threlte/core';
 	import * as THREE from 'three';
 	import { mulberry32 } from '$lib/utils/random';
-	import { createBarkTexture, getBranchGeometry } from '$lib/utils/tree';
+	import { createBarkTexture, getBranchGeometry, type NeedleData } from '$lib/utils/tree';
 
 	const FIXED = {
 		rootFlareMultiplier: 1.75,
@@ -75,7 +75,6 @@
 	const random = mulberry32(seed);
 	const VISIBLE_TRUNK_HEIGHT = TREE.trunkHeight * TREE.foliageEnd;
 
-	// Create trunk with bark detail and root flare - only up to foliage height
 	function createTrunkGeometry(): THREE.BufferGeometry {
 		const geometry = new THREE.CylinderGeometry(
 			TREE.trunkTopRadius,
@@ -90,37 +89,25 @@
 		const halfHeight = VISIBLE_TRUNK_HEIGHT / 2;
 		const flareZone = VISIBLE_TRUNK_HEIGHT * TREE.rootFlareHeight;
 
-		// Add bark displacement and root flare
 		for (let i = 0; i < positions.count; i++) {
 			const x = positions.getX(i);
 			const y = positions.getY(i);
 			const z = positions.getZ(i);
 
-			// Skip top and bottom caps (center vertices)
 			const radius = Math.sqrt(x * x + z * z);
 			if (radius < 0.01) continue;
 
-			// Root flare - exponential expansion at the base
-			const distFromBottom = y + halfHeight; // 0 at bottom, VISIBLE_TRUNK_HEIGHT at top
+			const distFromBottom = y + halfHeight;
 			let flareMultiplier = 1;
 			if (distFromBottom < flareZone) {
-				// How far into the flare zone (1 at bottom, 0 at flare boundary)
 				const flareProgress = 1 - distFromBottom / flareZone;
-				// Exponential curve for natural root flare shape
 				const flareAmount = Math.pow(flareProgress, 2.5);
-				// Scale from base radius to flare radius
 				flareMultiplier = 1 + (TREE.rootFlareMultiplier - 1) * flareAmount;
 			}
 
-			// Bark ridges - vertical grooves
 			const angle = Math.atan2(z, x);
 			const ridge = Math.sin(angle * CONFIG.trunk.barkRidgeFreq) * 0.02;
-
-			// Bark texture - irregular bumps
-			const bump =
-				Math.sin(y * CONFIG.trunk.barkBumpFreq + angle * 3) * Math.cos(angle * 7 + y * 2) * 0.015;
-
-			// Apply displacement radially with flare
+			const bump = Math.sin(y * CONFIG.trunk.barkBumpFreq + angle * 3) * Math.cos(angle * 7 + y * 2) * 0.015;
 			const factor = flareMultiplier * (1 + ridge + bump);
 			positions.setX(i, x * factor);
 			positions.setZ(i, z * factor);
@@ -130,7 +117,6 @@
 		return geometry;
 	}
 
-	// Create needle cluster geometry (cone-like shape pointing outward)
 	function createNeedleClusterGeometry(): THREE.BufferGeometry {
 		const geometry = new THREE.ConeGeometry(
 			CONFIG.needle.coneRadius,
@@ -143,18 +129,9 @@
 		return geometry;
 	}
 
-	// Generate all branch data
-	interface NeedleData {
-		position: THREE.Vector3;
-		rotation: THREE.Euler;
-		scale: number;
-		color: THREE.Color;
-	}
-
 	const branchMatrices: THREE.Matrix4[] = [];
 	const needles: NeedleData[] = [];
 
-	// Generate branches tier by tier (fir tree shape - conical)
 	for (let tier = 0; tier < TREE.branchTiers; tier++) {
 		const tierProgress = tier / (TREE.branchTiers - 1);
 		const tierY = VISIBLE_TRUNK_HEIGHT * TREE.foliageStart + tierProgress * VISIBLE_TRUNK_HEIGHT * (1 - TREE.foliageStart);
@@ -183,14 +160,12 @@
 			quaternion.setFromUnitVectors(new THREE.Vector3(1, 0, 0), outwardDir);
 			const branchRot = new THREE.Euler().setFromQuaternion(quaternion);
 
-			// Create transform matrix for instanced branch
 			const branchMatrix = new THREE.Matrix4();
 			branchMatrix.makeRotationFromQuaternion(quaternion);
 			branchMatrix.scale(new THREE.Vector3(branchLength, branchRadiusScale, branchRadiusScale));
 			branchMatrix.setPosition(branchPos);
 			branchMatrices.push(branchMatrix);
 
-			// Generate needles along branch
 			for (let n = 0; n < TREE.needleDensity; n++) {
 				const clusterProgress = n / (TREE.needleDensity - 1);
 				const t = 0.1 + clusterProgress * 0.85;
@@ -226,7 +201,6 @@
 		}
 	}
 
-	// Apical leader (top growth)
 	const leaderHeight = TREE.trunkHeight * 0.02;
 	const leaderY = VISIBLE_TRUNK_HEIGHT;
 	const leaderNeedles = 10;
@@ -244,7 +218,6 @@
 		needles.push({ position: needlePos, rotation: needleRot, scale: needleScale, color: CONFIG.colors.needleTip.clone() });
 	}
 
-	// Create instanced mesh for needles
 	const needleGeometry = createNeedleClusterGeometry();
 	const needleMaterial = new THREE.MeshStandardMaterial({
 		color: CONFIG.colors.needleBase,
@@ -253,7 +226,6 @@
 	});
 	const instancedMesh = new THREE.InstancedMesh(needleGeometry, needleMaterial, needles.length);
 
-	// Set instance matrices and colors
 	const matrix = new THREE.Matrix4();
 	const instanceColors = new Float32Array(needles.length * 3);
 
@@ -270,7 +242,6 @@
 	instancedMesh.instanceMatrix.needsUpdate = true;
 	instancedMesh.geometry.setAttribute('color', new THREE.InstancedBufferAttribute(instanceColors, 3));
 
-	// Create instanced mesh for branches
 	const branchGeometry = getBranchGeometry(CONFIG.branch.baseRadius, CONFIG.branch.radialSegments);
 	const branchMaterial = new THREE.MeshStandardMaterial({
 		color: CONFIG.colors.branch,
@@ -292,14 +263,9 @@
 	scale.y={scale}
 	scale.z={scale}
 >
-	<!-- Trunk -->
 	<T.Mesh geometry={trunkGeometry} position.y={VISIBLE_TRUNK_HEIGHT / 2} castShadow receiveShadow>
 		<T.MeshStandardMaterial color={CONFIG.colors.trunk} map={barkTexture} roughness={0.95} />
 	</T.Mesh>
-
-	<!-- Instanced branches -->
 	<T is={branchInstancedMesh} castShadow />
-
-	<!-- Instanced needles -->
 	<T is={instancedMesh} castShadow />
 </T.Group>

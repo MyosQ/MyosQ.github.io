@@ -14,9 +14,21 @@
 		from: Position;
 		to: Position;
 		endAt?: number;
+		revealOffset?: number;
+		revealDuration?: number;
+		revealDelay?: number;
 	}
 
-	let { children, progress, from, to, endAt = 1 }: Props = $props();
+	let {
+		children,
+		progress,
+		from,
+		to,
+		endAt = 1,
+		revealOffset = 0,
+		revealDuration = 800,
+		revealDelay = 0
+	}: Props = $props();
 
 	let t = $derived(Math.min(1, progress / endAt));
 
@@ -41,10 +53,14 @@
 
 <div
 	class="scroll-position"
+	class:reveal={revealOffset > 0}
 	style:left={x}
 	style:top={y}
-	style:transform-origin="{anchorX * 100}% {anchorY * 100}%"
-	style:transform="translate({-anchorX * 100}%, {-anchorY * 100}%)"
+	style:--anchor-x="{-anchorX * 100}%"
+	style:--anchor-y="{-anchorY * 100}%"
+	style:--reveal-offset="{revealOffset}px"
+	style:--reveal-duration="{revealDuration}ms"
+	style:--reveal-delay="{revealDelay}ms"
 >
 	{@render children()}
 </div>
@@ -54,5 +70,19 @@
 		position: fixed;
 		z-index: 100;
 		will-change: left, top, transform;
+		transform: translate(var(--anchor-x), var(--anchor-y));
+	}
+
+	.scroll-position.reveal {
+		animation: reveal-up var(--reveal-duration) cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay) both;
+	}
+
+	@keyframes reveal-up {
+		from {
+			transform: translate(var(--anchor-x), calc(var(--anchor-y) + var(--reveal-offset)));
+		}
+		to {
+			transform: translate(var(--anchor-x), var(--anchor-y));
+		}
 	}
 </style>

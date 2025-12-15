@@ -12,6 +12,8 @@
 	import { mulberry32 } from '$lib/utils/random';
 	import { browser } from '$app/environment';
 	import { KEYFRAMES, lerpSettings, getPathProgress, type CameraState } from '$lib/config/scene';
+	import { parseCameraHash, createCameraHashSaver } from '$lib/utils/camera';
+	import { distToPolygonEdge, isInsidePolygon } from '$lib/utils/polygon';
 
 	extend({ Water });
 
@@ -19,27 +21,7 @@
 
 	let controlsRef: ThreeOrbitControls | undefined;
 	let cameraRef: THREE.PerspectiveCamera | undefined;
-
-	function parseCameraHash(): { pos: [number, number, number]; target: [number, number, number] } | null {
-		if (!browser) return null;
-		const hash = window.location.hash;
-		if (!hash.startsWith('#cam=')) return null;
-		const parts = hash.slice(5).split(',').map(Number);
-		if (parts.length !== 6 || parts.some(isNaN)) return null;
-		return {
-			pos: [parts[0], parts[1], parts[2]],
-			target: [parts[3], parts[4], parts[5]]
-		};
-	}
-
-	function saveCameraHash() {
-		if (!controlsRef || !cameraRef) return;
-		const p = cameraRef.position;
-		const t = controlsRef.target;
-		const round = (n: number) => Math.round(n * 10) / 10;
-		const hash = `#cam=${round(p.x)},${round(p.y)},${round(p.z)},${round(t.x)},${round(t.y)},${round(t.z)}`;
-		history.replaceState(null, '', hash);
-	}
+	const saveCameraHash = createCameraHashSaver(() => cameraRef, () => controlsRef);
 
 	const CONFIG = {
 		sky: { elevation: 3, azimuth: 180, turbidity: 8, rayleigh: 3, mie: 0.01, scale: 10000 },
@@ -148,7 +130,6 @@
 		}
 	});
 
-	// Expose camera state getter to parent
 	$effect(() => {
 		if (cameraRef && controlsRef && props.onCameraReady) {
 			props.onCameraReady(() => ({
@@ -158,7 +139,6 @@
 		}
 	});
 
-	// Set camera state from parent (for loading viewpoints)
 	$effect(() => {
 		if (props.setCameraState && cameraRef && controlsRef) {
 			const { position, target } = props.setCameraState;
@@ -178,7 +158,6 @@
 	$effect(() => {
 		if (directionalLightRef) {
 			directionalLightRef.intensity = props.directionalIntensity;
-			// Update position based on sky elevation
 			const phi = THREE.MathUtils.degToRad(90 - props.skyElevation);
 			const theta = THREE.MathUtils.degToRad(CONFIG.sky.azimuth);
 			const dist = 500;
@@ -205,43 +184,8 @@
 	});
 
 	const islandCoords = islandGeoJson.geometry.coordinates[0] as [number, number][];
-
-	function distToIslandEdge(px: number, pz: number): number {
-		let minDist = Infinity;
-		const n = islandCoords.length - 1;
-
-		for (let i = 0; i < n; i++) {
-			const ax = islandCoords[i][0], az = islandCoords[i][1];
-			const bx = islandCoords[(i + 1) % n][0], bz = islandCoords[(i + 1) % n][1];
-			const dx = bx - ax, dz = bz - az;
-			const len2 = dx * dx + dz * dz;
-			if (len2 === 0) continue;
-			const t = Math.max(0, Math.min(1, ((px - ax) * dx + (pz - az) * dz) / len2));
-			const nearX = ax + t * dx, nearZ = az + t * dz;
-			const dist = Math.sqrt((px - nearX) ** 2 + (pz - nearZ) ** 2);
-			if (dist < minDist) minDist = dist;
-		}
-		return minDist;
-	}
-
-	function isOnIsland(px: number, pz: number): boolean {
-		let inside = false;
-		const n = islandCoords.length - 1;
-
-		for (let i = 0, j = n - 1; i < n; j = i++) {
-			const ix = islandCoords[i][0], iz = islandCoords[i][1];
-			const jx = islandCoords[j][0], jz = islandCoords[j][1];
-
-			const edgeCrossesRay = (iz > pz) !== (jz > pz);
-			if (edgeCrossesRay) {
-				const intersectX = (jx - ix) * (pz - iz) / (jz - iz) + ix;
-				if (px < intersectX) {
-					inside = !inside;
-				}
-			}
-		}
-		return inside;
-	}
+	const distToIslandEdge = (px: number, pz: number) => distToPolygonEdge(px, pz, islandCoords);
+	const isOnIsland = (px: number, pz: number) => isInsidePolygon(px, pz, islandCoords);
 
 	function noise2D(x: number, z: number, seed: number): number {
 		const n = Math.sin(x * 0.03 + seed) * Math.cos(z * 0.03 + seed * 1.3) +
@@ -252,19 +196,16 @@
 	}
 
 	function getTerrainHeight(x: number, z: number): number {
-		// Water at y=0.05. Vertical 1m cliff at exact GeoJSON boundary
-		if (!isOnIsland(x, z)) return -10; // deep underwater, invisible
+		if (!isOnIsland(x, z)) return -10;
 
 		const distFromEdge = distToIslandEdge(x, z);
 		const edgeFactor = Math.min(1, distFromEdge / 60);
-		// Shore edge at 0.55 (0.5m above water), rises inland
 		const baseHeight = 0.55 + edgeFactor * 10;
 		const variation = (noise2D(x, z, 42) * 0.5 + 0.5) * 10 * edgeFactor;
 		return baseHeight + variation;
 	}
 
 	function createIslandGeometry(): THREE.BufferGeometry {
-		// Create extruded shape from GeoJSON for true vertical walls
 		const shape = new THREE.Shape();
 		const coords = islandCoords;
 
@@ -274,13 +215,7 @@
 		}
 		shape.closePath();
 
-		const extrudeSettings = {
-			depth: 1, // 1 unit vertical cliff
-			bevelEnabled: false
-		};
-
-		const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-		// Rotate to XZ plane and position so top is at 0.55, bottom at -0.45
+		const geometry = new THREE.ExtrudeGeometry(shape, { depth: 1, bevelEnabled: false });
 		geometry.rotateX(-Math.PI / 2);
 		geometry.translate(0, -0.45, 0);
 
@@ -298,7 +233,6 @@
 			if (isOnIsland(x, z)) {
 				const distFromEdge = distToIslandEdge(x, z);
 				const edgeFactor = Math.min(1, distFromEdge / 60);
-				// Shore at 0.6 (well above water at 0.05), rises inland
 				const baseHeight = 0.6 + edgeFactor * 10;
 				const variation = (noise2D(x, z, 42) * 0.5 + 0.5) * 10 * edgeFactor;
 				positions.setZ(i, baseHeight + variation);

@@ -1,5 +1,12 @@
 import * as THREE from 'three';
 
+export interface NeedleData {
+	position: THREE.Vector3;
+	rotation: THREE.Euler;
+	scale: number;
+	color: THREE.Color;
+}
+
 const branchGeometryCache = new Map<string, THREE.CylinderGeometry>();
 
 export function getBranchGeometry(baseRadius = 0.035, radialSegments = 5): THREE.CylinderGeometry {
