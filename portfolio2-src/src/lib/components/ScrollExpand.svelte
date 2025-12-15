@@ -3,41 +3,32 @@
 
 	interface Props {
 		children: Snippet;
-		progress: number; // 0 to 1
-		startAt?: number; // progress threshold to start expanding (default 0.8)
-		endAt?: number; // progress threshold to fully expand (default 1)
+		progress: number;
+		startAt?: number;
+		endAt?: number;
 		direction?: 'down' | 'up' | 'left' | 'right';
-		maxSize?: string; // CSS value for max height/width
+		maxSize?: string;
 	}
 
-	let {
-		children,
-		progress,
-		startAt = 0.8,
-		endAt = 1,
-		direction = 'down',
-		maxSize = '500px'
-	}: Props = $props();
+	let { children, progress, startAt = 0.8, endAt = 1, direction = 'down', maxSize = '500px' }: Props = $props();
 
-	// Normalize progress within the start/end range
-	let expandProgress = $derived.by(() => {
+	let t = $derived.by(() => {
 		if (progress <= startAt) return 0;
 		if (progress >= endAt) return 1;
 		return (progress - startAt) / (endAt - startAt);
 	});
 
 	let isVertical = $derived(direction === 'down' || direction === 'up');
-	let size = $derived(`calc(${maxSize} * ${expandProgress})`);
-	let opacity = $derived(Math.min(1, expandProgress * 2)); // fade in faster than size
+	let isReverse = $derived(direction === 'up' || direction === 'left');
 </script>
 
 <div
 	class="scroll-expand"
 	class:vertical={isVertical}
 	class:horizontal={!isVertical}
-	class:reverse={direction === 'up' || direction === 'left'}
-	style:--size={size}
-	style:--opacity={opacity}
+	class:reverse={isReverse}
+	style:--size="calc({maxSize} * {t})"
+	style:--opacity={Math.min(1, t * 2)}
 	style:--max-size={maxSize}
 >
 	<div class="expand-content">
@@ -61,27 +52,23 @@
 
 	.scroll-expand.vertical.reverse .expand-content {
 		padding-bottom: 0.5em;
-	}
-
-	.scroll-expand.horizontal {
-		max-width: var(--size);
-	}
-
-	.expand-content {
-		opacity: var(--opacity);
-	}
-
-	/* Reverse directions: content anchored to bottom/right */
-	.scroll-expand.reverse.vertical .expand-content {
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-end;
 		min-height: var(--max-size);
 	}
 
-	.scroll-expand.reverse.horizontal .expand-content {
+	.scroll-expand.horizontal {
+		max-width: var(--size);
+	}
+
+	.scroll-expand.horizontal.reverse .expand-content {
 		display: flex;
 		justify-content: flex-end;
 		min-width: var(--max-size);
+	}
+
+	.expand-content {
+		opacity: var(--opacity);
 	}
 </style>

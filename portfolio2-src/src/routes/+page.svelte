@@ -46,7 +46,7 @@
 	function handleWheel(e: WheelEvent) {
 		if (!cameraPathEnabled) return;
 		e.preventDefault();
-		const delta = e.deltaY * 0.0003;
+		const delta = e.deltaY * 0.00015;
 		targetProgress = Math.max(0, Math.min(1, targetProgress + delta));
 	}
 
@@ -58,7 +58,7 @@
 		if (!cameraPathEnabled) return;
 		e.preventDefault();
 		const touchY = e.touches[0].clientY;
-		const delta = (touchStartY - touchY) * 0.002;
+		const delta = (touchStartY - touchY) * 0.001;
 		targetProgress = Math.max(0, Math.min(1, targetProgress + delta));
 		touchStartY = touchY;
 	}
@@ -167,16 +167,16 @@
 
 <ScrollPosition
 	progress={cameraPathProgress}
-	from={{ x: '50%', y: '50%', anchorX: 0.5, anchorY: 0.5 }}
+	from={{ x: '50%', y: '55%', anchorX: 0.5, anchorY: 0.5 }}
 	to={{ x: '5%', y: '5%', anchorX: 0, anchorY: 0 }}
-	endAt={0.5}
+	endAt={0.25}
 >
 	<LiquidGlass roundness={16} paddingX={1.5} paddingY={1} blur={12} interactive={false}>
 		<div class="glass-content">
 			<h1>Frej Sundqvist</h1>
 			<p>Software Developer</p>
 		</div>
-		<ScrollExpand progress={cameraPathProgress} startAt={0.55} endAt={0.75} maxSize="80px">
+		<ScrollExpand progress={cameraPathProgress} startAt={0.25} endAt={0.4} maxSize="80px">
 			<div class="expanded-info">
 				<p>Full-stack developer passionate about 3D web experiences</p>
 				<p>Stockholm, Sweden</p>

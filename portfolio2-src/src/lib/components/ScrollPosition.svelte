@@ -2,33 +2,30 @@
 	import type { Snippet } from 'svelte';
 
 	interface Position {
-		x: string; // CSS value: '50%', '20px', etc.
+		x: string;
 		y: string;
-		anchorX?: number; // transform origin 0-1 (0=left, 0.5=center, 1=right)
-		anchorY?: number; // transform origin 0-1 (0=top, 0.5=center, 1=bottom)
+		anchorX?: number;
+		anchorY?: number;
 	}
 
 	interface Props {
 		children: Snippet;
-		progress: number; // 0 to 1
+		progress: number;
 		from: Position;
 		to: Position;
-		endAt?: number; // progress value where position reaches 'to' (default 1)
+		endAt?: number;
 	}
 
 	let { children, progress, from, to, endAt = 1 }: Props = $props();
 
-	// Normalize progress to reach destination by endAt
-	let normalizedProgress = $derived(Math.min(1, progress / endAt));
+	let t = $derived(Math.min(1, progress / endAt));
 
-	// Parse CSS value to number and unit
 	function parseValue(val: string): { num: number; unit: string } {
 		const match = val.match(/^(-?[\d.]+)(.*)$/);
 		if (!match) return { num: 0, unit: 'px' };
 		return { num: parseFloat(match[1]), unit: match[2] || 'px' };
 	}
 
-	// Interpolate between two CSS values
 	function lerp(a: string, b: string, t: number): string {
 		const av = parseValue(a);
 		const bv = parseValue(b);
@@ -36,20 +33,17 @@
 		return `${av.num + (bv.num - av.num) * t}${av.unit}`;
 	}
 
-	let x = $derived(lerp(from.x, to.x, normalizedProgress));
-	let y = $derived(lerp(from.y, to.y, normalizedProgress));
-
-	// Interpolate anchor for transform-origin
-	let anchorX = $derived((from.anchorX ?? 0.5) + ((to.anchorX ?? 0.5) - (from.anchorX ?? 0.5)) * normalizedProgress);
-	let anchorY = $derived((from.anchorY ?? 0.5) + ((to.anchorY ?? 0.5) - (from.anchorY ?? 0.5)) * normalizedProgress);
-	let transformOrigin = $derived(`${anchorX * 100}% ${anchorY * 100}%`);
+	let x = $derived(lerp(from.x, to.x, t));
+	let y = $derived(lerp(from.y, to.y, t));
+	let anchorX = $derived((from.anchorX ?? 0.5) + ((to.anchorX ?? 0.5) - (from.anchorX ?? 0.5)) * t);
+	let anchorY = $derived((from.anchorY ?? 0.5) + ((to.anchorY ?? 0.5) - (from.anchorY ?? 0.5)) * t);
 </script>
 
 <div
 	class="scroll-position"
 	style:left={x}
 	style:top={y}
-	style:transform-origin={transformOrigin}
+	style:transform-origin="{anchorX * 100}% {anchorY * 100}%"
 	style:transform="translate({-anchorX * 100}%, {-anchorY * 100}%)"
 >
 	{@render children()}
