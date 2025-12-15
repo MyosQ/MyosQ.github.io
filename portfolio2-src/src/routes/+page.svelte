@@ -170,12 +170,12 @@
 	from={{ x: '50%', y: '50%', anchorX: 0.5, anchorY: 0.5 }}
 	to={{ x: '5%', y: '5%', anchorX: 0, anchorY: 0 }}
 >
-	<LiquidGlass roundness={24} paddingX={3} paddingY={2} blur={14} interactive={false}>
+	<LiquidGlass roundness={16} paddingX={1.5} paddingY={1} blur={12} interactive={false}>
 		<div class="glass-content">
 			<h1>Frej Sundqvist</h1>
 			<p>Software Developer</p>
 		</div>
-		<ScrollExpand progress={cameraPathProgress} startAt={0.7} endAt={0.95} maxSize="200px">
+		<ScrollExpand progress={cameraPathProgress} startAt={0.7} endAt={0.95} maxSize="80px">
 			<div class="expanded-info">
 				<p>Full-stack developer passionate about 3D web experiences</p>
 				<p>Stockholm, Sweden</p>
@@ -234,23 +234,23 @@
 	.glass-content {
 		text-align: center;
 		color: #fff;
-		text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+		text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 		font-family: system-ui, -apple-system, sans-serif;
 		white-space: nowrap;
 
 		h1 {
-			margin: 0 0 0.25em;
-			font-size: 2.5rem;
+			margin: 0 0 0.15em;
+			font-size: 1.4rem;
 			font-weight: 300;
-			letter-spacing: 0.05em;
+			letter-spacing: 0.03em;
 		}
 
 		p {
 			margin: 0;
-			font-size: 1rem;
+			font-size: 0.7rem;
 			font-weight: 400;
 			opacity: 0.85;
-			letter-spacing: 0.1em;
+			letter-spacing: 0.08em;
 			text-transform: uppercase;
 		}
 	}
@@ -258,12 +258,12 @@
 	.expanded-info {
 		color: #fff;
 		font-family: system-ui, -apple-system, sans-serif;
-		text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+		text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 		white-space: nowrap;
 
 		p {
-			margin: 0 0 0.4em;
-			font-size: 0.85rem;
+			margin: 0 0 0.25em;
+			font-size: 0.65rem;
 			opacity: 0.9;
 
 			&:last-child {

@@ -56,11 +56,11 @@
 	}
 
 	.scroll-expand.vertical:not(.reverse) .expand-content {
-		padding-top: 0.75em;
+		padding-top: 0.5em;
 	}
 
 	.scroll-expand.vertical.reverse .expand-content {
-		padding-bottom: 0.75em;
+		padding-bottom: 0.5em;
 	}
 
 	.scroll-expand.horizontal {

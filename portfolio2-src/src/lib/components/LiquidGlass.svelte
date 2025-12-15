@@ -70,10 +70,10 @@
 		position: absolute;
 		inset: 0;
 		border-radius: var(--roundness);
-		background: rgba(0, 0, 0, 0.15);
+		background: rgba(0, 0, 0, 0.1);
 		filter: blur(calc(16px * var(--thickness)));
 		transform: translateY(calc(8px * var(--thickness)));
-		opacity: 0.6;
+		opacity: 0.4;
 		pointer-events: none;
 		z-index: 0;
 		transition: all var(--duration) var(--ease);
@@ -86,21 +86,21 @@
 		overflow: hidden;
 		background: linear-gradient(
 			135deg,
-			rgba(255, 255, 255, 0.12) 0%,
-			rgba(255, 255, 255, 0.06) 50%,
-			rgba(255, 255, 255, 0.03) 100%
+			rgba(255, 255, 255, 0.06) 0%,
+			rgba(255, 255, 255, 0.03) 50%,
+			rgba(255, 255, 255, 0.01) 100%
 		);
-		backdrop-filter: blur(var(--blur)) saturate(1.2);
-		-webkit-backdrop-filter: blur(var(--blur)) saturate(1.2);
+		backdrop-filter: blur(var(--blur)) saturate(1.1);
+		-webkit-backdrop-filter: blur(var(--blur)) saturate(1.1);
 		box-shadow:
-			0 0 calc(40px * var(--thickness)) rgba(255, 255, 255, 0.05),
-			0 calc(4px * var(--thickness)) calc(24px * var(--thickness)) rgba(0, 0, 0, 0.1),
-			inset 0 calc(1px * var(--thickness)) calc(1px * var(--thickness)) rgba(255, 255, 255, 0.4),
-			inset 0 calc(-1px * var(--thickness)) calc(2px * var(--thickness)) rgba(0, 0, 0, 0.1),
-			inset 0 0 calc(20px * var(--thickness)) rgba(255, 255, 255, 0.05);
-		border: var(--border) solid rgba(255, 255, 255, 0.18);
-		border-top-color: rgba(255, 255, 255, 0.35);
-		border-left-color: rgba(255, 255, 255, 0.25);
+			0 0 calc(40px * var(--thickness)) rgba(255, 255, 255, 0.03),
+			0 calc(4px * var(--thickness)) calc(24px * var(--thickness)) rgba(0, 0, 0, 0.08),
+			inset 0 calc(1px * var(--thickness)) calc(1px * var(--thickness)) rgba(255, 255, 255, 0.25),
+			inset 0 calc(-1px * var(--thickness)) calc(2px * var(--thickness)) rgba(0, 0, 0, 0.08),
+			inset 0 0 calc(20px * var(--thickness)) rgba(255, 255, 255, 0.02);
+		border: var(--border) solid rgba(255, 255, 255, 0.12);
+		border-top-color: rgba(255, 255, 255, 0.22);
+		border-left-color: rgba(255, 255, 255, 0.16);
 		transition: all var(--duration) var(--ease);
 	}
 
@@ -111,12 +111,12 @@
 		border-radius: inherit;
 		background: linear-gradient(
 			105deg,
-			rgba(255, 255, 255, 0.3) 0%,
-			rgba(255, 255, 255, 0.1) 20%,
+			rgba(255, 255, 255, 0.15) 0%,
+			rgba(255, 255, 255, 0.05) 20%,
 			transparent 50%
 		);
 		pointer-events: none;
-		opacity: 0.8;
+		opacity: 0.6;
 		transition: opacity var(--duration) var(--ease);
 	}
 
