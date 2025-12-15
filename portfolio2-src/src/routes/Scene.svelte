@@ -325,87 +325,92 @@
 		foliageStart: number;
 	}> = [];
 
-	for (let i = 0; i < 40; i++) {
+	for (let i = 0; i < 200; i++) {
 		const x = (pineRng() - 0.5) * 280;
 		const z = (pineRng() - 0.5) * 140;
-		const scale = 3 + pineRng() * 7;
+		const scale = 1.5 + pineRng() * 3; // Small pines
 
 		if (!isOnIsland(x, -z)) continue;
-		if (distToIslandEdge(x, -z) < scale * 1.2) continue;
+		if (distToIslandEdge(x, -z) < scale * 1.5) continue;
 
-		const height = 3 + pineRng() * 6;
-		const heightRatio = height / 8;
+		const height = 2 + pineRng() * 4;
+		const heightRatio = height / 6;
 		pines.push({
-			position: [x, getTerrainHeight(x, -z) - scale * 0.3, z],
+			position: [x, getTerrainHeight(x, -z) - scale * 0.25, z],
 			scale,
 			seed: i + 100,
 			trunkHeight: height,
-			trunkBaseRadius: (0.12 + pineRng() * 0.08) * heightRatio,
-			trunkTopRadius: (0.02 + pineRng() * 0.02) * heightRatio,
-			whorls: 10 + Math.floor(pineRng() * 6),
-			branchesPerWhorl: 4 + Math.floor(pineRng() * 3),
-			branchLength: (0.5 + pineRng() * 0.5) * heightRatio,
-			branchSweep: 0.6 + pineRng() * 0.4,
-			fasciclesPerBranch: 12 + Math.floor(pineRng() * 8),
-			foliageStart: 0.2 + pineRng() * 0.15
+			trunkBaseRadius: (0.1 + pineRng() * 0.06) * heightRatio,
+			trunkTopRadius: (0.015 + pineRng() * 0.015) * heightRatio,
+			whorls: 8 + Math.floor(pineRng() * 5),
+			branchesPerWhorl: 4 + Math.floor(pineRng() * 2),
+			branchLength: (0.4 + pineRng() * 0.4) * heightRatio,
+			branchSweep: 0.5 + pineRng() * 0.4,
+			fasciclesPerBranch: 10 + Math.floor(pineRng() * 6),
+			foliageStart: 0.25 + pineRng() * 0.15
 		});
 
-		if (pines.length >= 8) break;
+		if (pines.length >= 45) break;
 	}
 
-	function createRockGeometry(seed: number): THREE.BufferGeometry {
-		const geometry = new THREE.IcosahedronGeometry(1, 1);
-		const positions = geometry.attributes.position;
-		const rockRng = mulberry32(seed);
-
-		for (let i = 0; i < positions.count; i++) {
-			const x = positions.getX(i);
-			const y = positions.getY(i);
-			const z = positions.getZ(i);
-			const noise = (rockRng() - 0.5) * 0.35;
-			positions.setX(i, x * (1 + noise) * (0.9 + rockRng() * 0.4));
-			positions.setY(i, y * (0.5 + rockRng() * 0.3));
-			positions.setZ(i, z * (1 + noise));
-		}
+	// Create grass blade geometry
+	function createGrassBladeGeometry(): THREE.BufferGeometry {
+		const geometry = new THREE.BufferGeometry();
+		// Short grass blade - 2x higher
+		const vertices = new Float32Array([
+			-0.08, 0, 0,
+			0.08, 0, 0,
+			0, 1.2, 0
+		]);
+		geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
 		geometry.computeVertexNormals();
 		return geometry;
 	}
 
-	// Generate rocks procedurally, concentrated near shoreline
-	const rockRng = mulberry32(12345);
-	const rocks: Array<{
-		geo: THREE.BufferGeometry;
-		pos: [number, number, number];
-		scale: [number, number, number];
-	}> = [];
+	// Generate grass instances - dense and dark
+	const grassRng = mulberry32(77777);
+	const grassCount = 40000;
+	const grassGeometry = createGrassBladeGeometry();
+	const grassMaterial = new THREE.MeshBasicMaterial({
+		color: '#020a05',
+		side: THREE.DoubleSide
+	});
+	const grassMesh = new THREE.InstancedMesh(grassGeometry, grassMaterial, grassCount);
 
-	for (let i = 0; i < 500; i++) {
-		const x = (rockRng() - 0.5) * 320;
-		const z = (rockRng() - 0.5) * 200;
+	const grassMatrix = new THREE.Matrix4();
+	const grassColors = new Float32Array(grassCount * 3);
+	let grassIndex = 0;
+
+	for (let i = 0; i < 250000 && grassIndex < grassCount; i++) {
+		const x = (grassRng() - 0.5) * 280;
+		const z = (grassRng() - 0.5) * 160;
 
 		if (!isOnIsland(x, -z)) continue;
-
 		const distFromEdge = distToIslandEdge(x, -z);
-		// Strongly favor rocks at shoreline (0-12 units from edge)
-		if (distFromEdge > 12 && rockRng() > 0.08) continue;
+		if (distFromEdge < 3) continue; // No grass at water edge
 
-		// Larger rocks near shore, smaller inland
-		const shoreBonus = Math.max(0, 1 - distFromEdge / 15);
-		const baseScale = 1.5 + rockRng() * 5 + shoreBonus * 4;
-		const y = getTerrainHeight(x, -z) - baseScale * 0.4;
+		const y = getTerrainHeight(x, -z);
+		const scale = 1.1 + grassRng() * 0.6;
+		const rotY = grassRng() * Math.PI * 2;
+		const tilt = (grassRng() - 0.5) * 0.2;
 
-		rocks.push({
-			geo: createRockGeometry(i * 7919),
-			pos: [x, y, z],
-			scale: [
-				baseScale * (0.8 + rockRng() * 0.5),
-				baseScale * (0.35 + rockRng() * 0.35),
-				baseScale * (0.8 + rockRng() * 0.5)
-			]
-		});
+		grassMatrix.makeRotationY(rotY);
+		grassMatrix.multiply(new THREE.Matrix4().makeRotationX(tilt));
+		grassMatrix.scale(new THREE.Vector3(scale, scale * (0.6 + grassRng() * 0.4), scale));
+		grassMatrix.setPosition(x, y, z);
+		grassMesh.setMatrixAt(grassIndex, grassMatrix);
 
-		if (rocks.length >= 120) break;
+		// Dark green grass color
+		const colorVar = grassRng() * 0.1;
+		grassColors[grassIndex * 3] = 0.008 + colorVar * 0.008;
+		grassColors[grassIndex * 3 + 1] = 0.03 + colorVar * 0.02;
+		grassColors[grassIndex * 3 + 2] = 0.015 + colorVar * 0.008;
+
+		grassIndex++;
 	}
+
+	grassMesh.instanceMatrix.needsUpdate = true;
+	grassMesh.geometry.setAttribute('color', new THREE.InstancedBufferAttribute(grassColors, 3));
 </script>
 
 <T.PerspectiveCamera
@@ -478,12 +483,12 @@
 />
 
 <MountainSilhouette
-	radius={2800}
-	baseHeight={80}
-	peakHeight={400}
-	peakAngle={Math.PI * 1.25}
+	radius={5500}
+	baseHeight={60}
+	peakHeight={250}
+	peakAngle={Math.PI * 1.0}
 	peakSpread={0.5}
-	yPosition={60}
+	yPosition={40}
 	color="#020304"
 />
 
@@ -498,11 +503,7 @@
 	/>
 {/each}
 
-{#each rocks as rock, i (i)}
-	<T.Mesh geometry={rock.geo} position={rock.pos} scale={rock.scale} castShadow receiveShadow>
-		<T.MeshStandardMaterial color="#1a1815" roughness={0.95} />
-	</T.Mesh>
-{/each}
+<T is={grassMesh} />
 
 {#each trees as tree (tree.seed)}
 	<FirTree

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { T } from '@threlte/core';
 	import * as THREE from 'three';
+	import { mulberry32 } from '$lib/utils/random';
 
 	interface Props {
 		radius: number;
@@ -10,6 +11,7 @@
 		peakSpread?: number;
 		yPosition?: number;
 		color?: string;
+		seed?: number;
 	}
 
 	let {
@@ -19,8 +21,31 @@
 		peakAngle = Math.PI * 0.75,
 		peakSpread = 0.4,
 		yPosition = 50,
-		color = '#030506'
+		color = '#030506',
+		seed = 12345
 	}: Props = $props();
+
+	// Generate random peaks around the entire mountain range
+	const rng = mulberry32(seed);
+	const numPeaks = 20 + Math.floor(rng() * 10);
+	const peaks: Array<{ angle: number; height: number; spread: number }> = [];
+
+	for (let i = 0; i < numPeaks; i++) {
+		const angle = rng() * Math.PI * 2; // Random position around circle
+		const height = (0.3 + rng() * 0.7) * peakHeight; // 30-100% of max height
+		const spread = (0.2 + rng() * 0.5) * peakSpread; // Varying widths
+		peaks.push({ angle, height, spread });
+	}
+
+	// Add a few prominent peaks near the specified peakAngle
+	for (let i = 0; i < 4; i++) {
+		const offset = (rng() - 0.5) * 1.2;
+		peaks.push({
+			angle: peakAngle + offset,
+			height: (0.7 + rng() * 0.3) * peakHeight,
+			spread: (0.3 + rng() * 0.4) * peakSpread
+		});
+	}
 
 	function createGeometry(): THREE.BufferGeometry {
 		const segments = 256;
@@ -34,31 +59,22 @@
 			const y = positions.getY(i);
 
 			if (y > 0) {
-				// Multiple peaks with varying sizes
-				const peak1Angle = peakAngle - 0.25;
-				const peak2Angle = peakAngle + 0.35;
-				const peak3Angle = peakAngle + 0.9;
-				const peak4Angle = peakAngle - 0.7;
-
-				const dist1 = Math.abs(Math.atan2(Math.sin(angle - peak1Angle), Math.cos(angle - peak1Angle)));
-				const dist2 = Math.abs(Math.atan2(Math.sin(angle - peak2Angle), Math.cos(angle - peak2Angle)));
-				const dist3 = Math.abs(Math.atan2(Math.sin(angle - peak3Angle), Math.cos(angle - peak3Angle)));
-				const dist4 = Math.abs(Math.atan2(Math.sin(angle - peak4Angle), Math.cos(angle - peak4Angle)));
-
-				const peak1 = Math.max(0, 1 - dist1 / peakSpread) * peakHeight;
-				const peak2 = Math.max(0, 1 - dist2 / (peakSpread * 0.7)) * peakHeight * 0.75;
-				const peak3 = Math.max(0, 1 - dist3 / (peakSpread * 0.5)) * peakHeight * 0.5;
-				const peak4 = Math.max(0, 1 - dist4 / (peakSpread * 0.6)) * peakHeight * 0.6;
+				// Calculate contribution from all peaks
+				let maxPeakHeight = 0;
+				for (const peak of peaks) {
+					const dist = Math.abs(Math.atan2(Math.sin(angle - peak.angle), Math.cos(angle - peak.angle)));
+					const contribution = Math.max(0, 1 - dist / peak.spread) * peak.height;
+					maxPeakHeight = Math.max(maxPeakHeight, contribution);
+				}
 
 				// Multi-frequency noise for rugged ridgeline
 				const ridge =
-					Math.sin(angle * 5) * 15 +
-					Math.sin(angle * 11 + 2.1) * 8 +
-					Math.sin(angle * 23 + 0.7) * 4 +
-					Math.sin(angle * 47 + 3.2) * 2;
+					Math.sin(angle * 5 + seed * 0.1) * 15 +
+					Math.sin(angle * 11 + 2.1 + seed * 0.2) * 8 +
+					Math.sin(angle * 23 + 0.7 + seed * 0.3) * 5 +
+					Math.sin(angle * 47 + 3.2 + seed * 0.4) * 3;
 
-				const maxPeak = Math.max(peak1, peak2, peak3, peak4);
-				positions.setY(i, y + maxPeak + ridge);
+				positions.setY(i, y + maxPeakHeight + ridge);
 			}
 		}
 		geometry.computeVertexNormals();
