@@ -9,6 +9,7 @@ Jekyll 4.3 + minima theme. Personal website with blog, interactive CV, and print
 - `bundle exec jekyll serve` - Local dev (port 4000)
 - `docker compose up` - Jekyll containerized (port 4001)
 - `docker compose -f docker-compose-portfolio.yml up` - Portfolio dev (port 5173)
+- `docker compose -f docker-compose-portfolio2.yml up` - Portfolio2 dev (port 5174)
 - `docker compose -f docker-compose-pdf.yml up` - Generate CV PDF from LaTeX
 
 ## Structure
@@ -16,6 +17,8 @@ Jekyll 4.3 + minima theme. Personal website with blog, interactive CV, and print
 ```
 portfolio-src/   → 3D Portfolio source (SvelteKit + Threlte/Three.js)
 portfolio/       → 3D Portfolio build output (static, committed to repo)
+portfolio2-src/  → 3D Portfolio2 source (island scene)
+portfolio2/      → 3D Portfolio2 build output (static, committed to repo)
 cv/              → Interactive CV (standalone HTML/CSS/JS, NOT Jekyll-processed)
 cv_for_print/    → LaTeX CVs (base/ is canonical, copy to subdirs for variants)
 _posts/          → Blog posts (underscore prefix = draft)
@@ -43,6 +46,24 @@ PlaneGeometry + `rotation.x={-Math.PI/2}` transforms: local Y → world -Z.
 
 ### GeoJSON Lake Polygon
 `lake.json` has duplicate closing point (GeoJSON standard). In loops: use `length - 1` to exclude duplicate.
+
+## 3D Portfolio2 (portfolio2-src/ → portfolio2/)
+
+Island in a foggy lake scene. Same tech stack as portfolio. Deployed at `/portfolio2`.
+
+- `src/routes/Scene.svelte` - Island scene (inverted logic from portfolio)
+- `src/lib/data/island.json` - GeoJSON polygon for island shape
+- Reuses FirTree.svelte, PineTree.svelte, tree.ts from portfolio-src
+
+Key differences from portfolio:
+- `isOnIsland()` instead of `isInsideLake()` - trees placed ON island
+- Dense fog (near: 80, far: 350) for atmospheric effect
+- Low sun (elevation: 3) with warm golden hour lighting
+- Camera starts from water looking at island
+
+Commands:
+- Dev: `npm run dev --prefix portfolio2-src`
+- Build: `npm run build --prefix portfolio2-src` (outputs to `portfolio2/`)
 
 ## Interactive CV (cv/)
 

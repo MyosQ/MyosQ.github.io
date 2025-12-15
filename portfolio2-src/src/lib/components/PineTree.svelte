@@ -1,0 +1,488 @@
+<script lang="ts">
+	import { T } from '@threlte/core';
+	import * as THREE from 'three';
+	import { mulberry32 } from '$lib/utils/random';
+	import { createBarkTexture, getBranchGeometry, type NeedleData } from '$lib/utils/tree';
+
+	const CONFIG = {
+		trunk: { segments: 8, barkRidgeFreq: 6, barkBumpFreq: 10 },
+		branch: { baseRadius: 0.04, radialSegments: 5 },
+		subBranch: { baseRadius: 0.02, radialSegments: 4 },
+		needle: { length: 0.35, radius: 0.006, segments: 3, perFascicle: 5 },
+		rootFlare: { multiplier: 1.5, height: 0.01 }
+	} as const;
+
+	const COLORS = {
+		trunk: new THREE.Color(0.12, 0.06, 0.04),
+		branch: new THREE.Color(0.10, 0.05, 0.03),
+		needleBase: new THREE.Color(0.008, 0.02, 0.01),
+		needleTip: new THREE.Color(0.015, 0.04, 0.02)
+	};
+
+	interface Props {
+		position?: [number, number, number];
+		scale?: number;
+		seed?: number;
+		trunkHeight?: number;
+		trunkBaseRadius?: number;
+		trunkTopRadius?: number;
+		whorls?: number;
+		branchesPerWhorl?: number;
+		branchLength?: number;
+		branchSweep?: number;
+		fasciclesPerBranch?: number;
+		foliageStart?: number;
+		crownHeight?: number;
+		crownSpread?: number;
+	}
+
+	let {
+		position = [0, 0, 0],
+		scale = 1,
+		seed = 42,
+		trunkHeight = 12,
+		trunkBaseRadius = 0.25,
+		trunkTopRadius = 0.04,
+		whorls = 10,
+		branchesPerWhorl = 6,
+		branchLength = 2.5,
+		branchSweep = 0.4,
+		fasciclesPerBranch = 12,
+		foliageStart = 0.35,
+		crownHeight = 0.12,
+		crownSpread = 0.6
+	}: Props = $props();
+
+	const random = mulberry32(seed);
+	const barkTexture = createBarkTexture('pine');
+
+	const VISIBLE_TRUNK = trunkHeight;
+
+	function createTrunkGeometry(): THREE.BufferGeometry {
+		const geometry = new THREE.CylinderGeometry(
+			trunkTopRadius,
+			trunkBaseRadius,
+			VISIBLE_TRUNK,
+			CONFIG.trunk.segments,
+			32,
+			false
+		);
+
+		const positions = geometry.attributes.position;
+		const halfHeight = VISIBLE_TRUNK / 2;
+		const flareZone = VISIBLE_TRUNK * CONFIG.rootFlare.height;
+
+		for (let i = 0; i < positions.count; i++) {
+			const x = positions.getX(i);
+			const y = positions.getY(i);
+			const z = positions.getZ(i);
+
+			const radius = Math.sqrt(x * x + z * z);
+			if (radius < 0.01) continue;
+
+			const distFromBottom = y + halfHeight;
+			let flareMultiplier = 1;
+			if (distFromBottom < flareZone) {
+				const flareProgress = 1 - distFromBottom / flareZone;
+				const flareAmount = Math.pow(flareProgress, 2.5);
+				flareMultiplier = 1 + (CONFIG.rootFlare.multiplier - 1) * flareAmount;
+			}
+
+			const angle = Math.atan2(z, x);
+			const ridge = Math.sin(angle * CONFIG.trunk.barkRidgeFreq) * 0.015;
+			const bump = Math.sin(y * CONFIG.trunk.barkBumpFreq + angle * 3) * 0.01;
+
+			const factor = flareMultiplier * (1 + ridge + bump);
+			positions.setX(i, x * factor);
+			positions.setZ(i, z * factor);
+		}
+
+		geometry.computeVertexNormals();
+		return geometry;
+	}
+
+	function createNeedleGeometry(): THREE.BufferGeometry {
+		const geometry = new THREE.CylinderGeometry(
+			CONFIG.needle.radius * 0.3, CONFIG.needle.radius, CONFIG.needle.length, CONFIG.needle.segments, 1
+		);
+		geometry.rotateX(Math.PI / 2);
+		geometry.translate(0, 0, CONFIG.needle.length / 2);
+		return geometry;
+	}
+
+	const branchMatrices: THREE.Matrix4[] = [];
+	const subBranchMatrices: THREE.Matrix4[] = [];
+	const needles: NeedleData[] = [];
+
+	for (let whorl = 0; whorl < whorls; whorl++) {
+		const whorlProgress = whorl / (whorls - 1);
+		const whorlY = VISIBLE_TRUNK * foliageStart + whorlProgress * VISIBLE_TRUNK * (1 - foliageStart);
+		const trunkRadiusAtWhorl = trunkBaseRadius + (trunkTopRadius - trunkBaseRadius) * (whorlY / VISIBLE_TRUNK);
+		const middleBulge = 1 + 0.3 * Math.sin(whorlProgress * Math.PI);
+		const whorlBranchLength = branchLength * middleBulge * (0.5 + random() * 1.0);
+
+		const branchCount = branchesPerWhorl;
+		const whorlOffset = whorl * 0.6 + random() * 0.3;
+
+		for (let b = 0; b < branchCount; b++) {
+			const angle = (b / branchCount) * Math.PI * 2 + whorlOffset;
+			const thisBranchLength = Math.min(whorlBranchLength * (0.3 + random() * 1.4), branchLength * 1.3);
+			const initialAngle = -0.1 + random() * 0.1;
+			const droopAmount = branchSweep * 0.15 * (0.5 + random() * 0.5);
+
+			const branchPos = new THREE.Vector3(
+				Math.cos(angle) * trunkRadiusAtWhorl,
+				whorlY,
+				Math.sin(angle) * trunkRadiusAtWhorl
+			);
+
+			const outwardDir = new THREE.Vector3(
+				Math.cos(angle),
+				initialAngle - droopAmount,
+				Math.sin(angle)
+			).normalize();
+
+			const quaternion = new THREE.Quaternion();
+			quaternion.setFromUnitVectors(new THREE.Vector3(1, 0, 0), outwardDir);
+			const branchRot = new THREE.Euler().setFromQuaternion(quaternion);
+
+			const branchMatrix = new THREE.Matrix4();
+			branchMatrix.makeRotationFromQuaternion(quaternion);
+			const heightFactor = 1.5 - whorlProgress * 0.8;
+			const branchWidth = (0.5 + random() * 0.8) * heightFactor;
+			branchMatrix.scale(new THREE.Vector3(thisBranchLength, branchWidth, branchWidth));
+			branchMatrix.setPosition(branchPos);
+			branchMatrices.push(branchMatrix);
+
+			const subBranchCount = 4 + Math.floor(random() * 3);
+			for (let sb = 0; sb < subBranchCount; sb++) {
+				const subProgress = (sb + 0.3) / subBranchCount;
+				const subT = 0.2 + subProgress * 0.6;
+
+				const subLocalX = thisBranchLength * subT;
+				const subLocalY = -thisBranchLength * subT * droopAmount * subT * 0.3;
+				const subLocalPos = new THREE.Vector3(subLocalX, subLocalY, 0);
+				subLocalPos.applyEuler(branchRot);
+				const subBranchPos = branchPos.clone().add(subLocalPos);
+
+				const subAngleH = (random() - 0.5) * Math.PI * 1.5;
+				const subAngleV = (random() - 0.5) * 0.8;
+
+				const subDir = new THREE.Vector3(
+					Math.cos(angle + subAngleH),
+					subAngleV - 0.2,
+					Math.sin(angle + subAngleH)
+				).normalize();
+
+				const subQuat = new THREE.Quaternion();
+				subQuat.setFromUnitVectors(new THREE.Vector3(1, 0, 0), subDir);
+				const subBranchRot = new THREE.Euler().setFromQuaternion(subQuat);
+
+				const subBranchLength = thisBranchLength * (0.2 + random() * 0.8);
+				const subBranchWidth = (0.4 + random() * 0.6) * heightFactor;
+
+				const subMatrix = new THREE.Matrix4();
+				subMatrix.makeRotationFromQuaternion(subQuat);
+				subMatrix.scale(new THREE.Vector3(subBranchLength, subBranchWidth, subBranchWidth));
+				subMatrix.setPosition(subBranchPos);
+				subBranchMatrices.push(subMatrix);
+
+				const subFascicles = Math.floor(fasciclesPerBranch * 0.4);
+				for (let f = 0; f < subFascicles; f++) {
+					const fascicleProgress = f / Math.max(1, subFascicles - 1);
+					const t = 0.6 + fascicleProgress * 0.4;
+					const upCurve = Math.pow(t, 2) * 0.3;
+					const needleLocalPos = new THREE.Vector3(subBranchLength * t, upCurve * subBranchLength, 0);
+					needleLocalPos.applyEuler(subBranchRot);
+					const fasciclePos = subBranchPos.clone().add(needleLocalPos);
+
+					for (let n = 0; n < CONFIG.needle.perFascicle; n++) {
+						const needleAngle = (n / CONFIG.needle.perFascicle) * Math.PI * 2 + random() * 0.5;
+						const spreadAngle = 0.4 + random() * 0.3;
+
+						const needleDir = new THREE.Vector3(
+							Math.cos(angle + subAngleH) * Math.cos(spreadAngle),
+							Math.sin(spreadAngle) * Math.cos(needleAngle),
+							Math.sin(angle + subAngleH) * Math.cos(spreadAngle) + Math.sin(needleAngle) * 0.4
+						).normalize();
+
+						const needleQuat = new THREE.Quaternion();
+						needleQuat.setFromUnitVectors(new THREE.Vector3(0, 0, 1), needleDir);
+						needleQuat.multiply(new THREE.Quaternion().setFromEuler(
+							new THREE.Euler(random() * 0.3 - 0.15, random() * 0.3 - 0.15, 0)
+						));
+						const needleRot = new THREE.Euler().setFromQuaternion(needleQuat);
+
+						const colorMix = fascicleProgress * 0.4 + random() * 0.4;
+						const needleColor = COLORS.needleBase.clone().lerp(COLORS.needleTip, colorMix);
+						const needleScale = (0.7 + random() * 0.5);
+
+						needles.push({
+							position: fasciclePos.clone(),
+							rotation: needleRot,
+							scale: needleScale,
+							color: needleColor
+						});
+					}
+				}
+			}
+
+			const mainFascicleCount = Math.floor(fasciclesPerBranch * 0.6);
+			for (let f = 0; f < mainFascicleCount; f++) {
+				const fascicleProgress = f / Math.max(1, mainFascicleCount - 1);
+				const t = 0.5 + fascicleProgress * 0.5;
+				const localX = thisBranchLength * t;
+				const upCurve = Math.pow(t, 2) * 0.25;
+				const localY = upCurve * thisBranchLength;
+
+				const localPos = new THREE.Vector3(localX, localY, 0);
+				localPos.applyEuler(branchRot);
+				const fasciclePos = branchPos.clone().add(localPos);
+
+				for (let n = 0; n < CONFIG.needle.perFascicle; n++) {
+					const needleAngle = (n / CONFIG.needle.perFascicle) * Math.PI * 2 + random() * 0.5;
+					const spreadAngle = 0.35 + random() * 0.25;
+
+					const needleDir = new THREE.Vector3(
+						Math.cos(angle) * Math.cos(spreadAngle),
+						Math.sin(spreadAngle) * Math.cos(needleAngle),
+						Math.sin(angle) * Math.cos(spreadAngle) + Math.sin(needleAngle) * 0.35
+					).normalize();
+
+					const needleQuat = new THREE.Quaternion();
+					needleQuat.setFromUnitVectors(new THREE.Vector3(0, 0, 1), needleDir);
+					needleQuat.multiply(new THREE.Quaternion().setFromEuler(
+						new THREE.Euler(random() * 0.25 - 0.125, random() * 0.25 - 0.125, 0)
+					));
+					const needleRot = new THREE.Euler().setFromQuaternion(needleQuat);
+
+					const colorMix = fascicleProgress * 0.5 + random() * 0.3;
+					const needleColor = COLORS.needleBase.clone().lerp(COLORS.needleTip, colorMix);
+					const needleScale = (0.8 + random() * 0.4);
+
+					needles.push({
+						position: fasciclePos.clone(),
+						rotation: needleRot,
+						scale: needleScale,
+						color: needleColor
+					});
+				}
+			}
+		}
+	}
+
+	const actualCrownHeight = trunkHeight * crownHeight * 0.6;
+	const crownTiers = 3;
+	const crownBranchesPerTier = 6;
+
+	for (let tier = 0; tier < crownTiers; tier++) {
+		const tierProgress = tier / Math.max(1, crownTiers - 1);
+		const tierY = VISIBLE_TRUNK * 0.90 + tierProgress * actualCrownHeight;
+		const tierSpread = crownSpread * branchLength * (1.0 - tierProgress * 0.5);
+		const tierOffset = tier * 0.6 + random() * 0.3;
+
+		for (let b = 0; b < crownBranchesPerTier; b++) {
+			const angle = (b / crownBranchesPerTier) * Math.PI * 2 + tierOffset;
+			const branchLen = tierSpread * (0.85 + random() * 0.3);
+			const upAngle = 0.1 + tierProgress * 0.4 + random() * 0.1;
+			const outDir = new THREE.Vector3(
+				Math.cos(angle) * Math.cos(upAngle),
+				Math.sin(upAngle),
+				Math.sin(angle) * Math.cos(upAngle)
+			).normalize();
+
+			const branchPos = new THREE.Vector3(
+				Math.cos(angle) * trunkTopRadius * 0.8,
+				tierY,
+				Math.sin(angle) * trunkTopRadius * 0.8
+			);
+
+			const crownQuat = new THREE.Quaternion();
+			crownQuat.setFromUnitVectors(new THREE.Vector3(1, 0, 0), outDir);
+			const crownMatrix = new THREE.Matrix4();
+			crownMatrix.makeRotationFromQuaternion(crownQuat);
+			crownMatrix.scale(new THREE.Vector3(branchLen, 0.7, 0.7));
+			crownMatrix.setPosition(branchPos);
+			branchMatrices.push(crownMatrix);
+
+			const crownRot = new THREE.Euler().setFromQuaternion(crownQuat);
+			const crownFascicles = Math.floor(fasciclesPerBranch * 0.8);
+
+			for (let f = 0; f < crownFascicles; f++) {
+				const fascicleProgress = f / Math.max(1, crownFascicles - 1);
+				const t = 0.3 + fascicleProgress * 0.7;
+				const upCurve = Math.pow(t, 2) * 0.15 * branchLen;
+
+				const needleLocalPos = new THREE.Vector3(branchLen * t, upCurve, (random() - 0.5) * 0.1);
+				needleLocalPos.applyEuler(crownRot);
+				const fasciclePos = branchPos.clone().add(needleLocalPos);
+
+				for (let n = 0; n < CONFIG.needle.perFascicle; n++) {
+					const needleAngle = (n / CONFIG.needle.perFascicle) * Math.PI * 2 + random() * 0.6;
+					const spreadAngle = 0.3 + random() * 0.4;
+
+					const needleDir = new THREE.Vector3(
+						outDir.x * 0.4 + Math.cos(needleAngle) * 0.4,
+						0.5 + Math.sin(spreadAngle) * 0.4,
+						outDir.z * 0.4 + Math.sin(needleAngle) * 0.4
+					).normalize();
+
+					const needleQuat = new THREE.Quaternion();
+					needleQuat.setFromUnitVectors(new THREE.Vector3(0, 0, 1), needleDir);
+					const needleRot = new THREE.Euler().setFromQuaternion(needleQuat);
+
+					const colorMix = 0.4 + fascicleProgress * 0.4 + random() * 0.2;
+					needles.push({
+						position: fasciclePos.clone(),
+						rotation: needleRot,
+						scale: 0.9 + random() * 0.3,
+						color: COLORS.needleBase.clone().lerp(COLORS.needleTip, colorMix)
+					});
+				}
+			}
+
+			const crownSubCount = 2 + Math.floor(random() * 2);
+			for (let sb = 0; sb < crownSubCount; sb++) {
+				const subT = 0.3 + (sb / crownSubCount) * 0.5;
+				const subLocalPos = new THREE.Vector3(branchLen * subT, 0, 0);
+				subLocalPos.applyEuler(crownRot);
+				const subPos = branchPos.clone().add(subLocalPos);
+
+				const subAngleH = (random() - 0.5) * Math.PI * 0.8;
+				const subAngleV = 0.1 + random() * 0.4;
+				const subDir = new THREE.Vector3(
+					Math.cos(angle + subAngleH) * Math.cos(subAngleV),
+					Math.sin(subAngleV),
+					Math.sin(angle + subAngleH) * Math.cos(subAngleV)
+				).normalize();
+
+				const subQuat = new THREE.Quaternion();
+				subQuat.setFromUnitVectors(new THREE.Vector3(1, 0, 0), subDir);
+				const subLen = branchLen * (0.3 + random() * 0.3);
+
+				const subMatrix = new THREE.Matrix4();
+				subMatrix.makeRotationFromQuaternion(subQuat);
+				subMatrix.scale(new THREE.Vector3(subLen, 0.5, 0.5));
+				subMatrix.setPosition(subPos);
+				subBranchMatrices.push(subMatrix);
+
+				const subRot = new THREE.Euler().setFromQuaternion(subQuat);
+				for (let f = 0; f < 4; f++) {
+					const t = 0.5 + (f / 4) * 0.5;
+					const subNeedlePos = new THREE.Vector3(subLen * t, 0, 0);
+					subNeedlePos.applyEuler(subRot);
+					const fasciclePos = subPos.clone().add(subNeedlePos);
+
+					for (let n = 0; n < CONFIG.needle.perFascicle; n++) {
+						const needleAngle = (n / CONFIG.needle.perFascicle) * Math.PI * 2 + random() * 0.5;
+						const needleDir = new THREE.Vector3(
+							subDir.x * 0.3 + Math.cos(needleAngle) * 0.4,
+							0.6 + random() * 0.3,
+							subDir.z * 0.3 + Math.sin(needleAngle) * 0.4
+						).normalize();
+
+						const needleQuat = new THREE.Quaternion();
+						needleQuat.setFromUnitVectors(new THREE.Vector3(0, 0, 1), needleDir);
+
+						needles.push({
+							position: fasciclePos.clone(),
+							rotation: new THREE.Euler().setFromQuaternion(needleQuat),
+							scale: 0.8 + random() * 0.3,
+							color: COLORS.needleTip.clone()
+						});
+					}
+				}
+			}
+		}
+	}
+
+	const leaderTipY = VISIBLE_TRUNK * 0.92 + actualCrownHeight * 0.85;
+	const leaderTuftRadius = 0.25;
+
+	for (let ring = 0; ring < 3; ring++) {
+		const ringY = leaderTipY + ring * 0.06;
+		const ringRadius = leaderTuftRadius * (1 - ring * 0.25);
+		const needlesInRing = 8 - ring * 2;
+
+		for (let n = 0; n < needlesInRing; n++) {
+			const angle = (n / needlesInRing) * Math.PI * 2 + ring * 0.5 + random() * 0.3;
+			const spreadFromCenter = ringRadius * (0.3 + random() * 0.7);
+			const needlePos = new THREE.Vector3(
+				Math.cos(angle) * spreadFromCenter, ringY, Math.sin(angle) * spreadFromCenter
+			);
+			const upwardness = 0.4 + ring * 0.25;
+			const needleDir = new THREE.Vector3(
+				Math.cos(angle) * (1 - upwardness) * 0.8,
+				upwardness,
+				Math.sin(angle) * (1 - upwardness) * 0.8
+			).normalize();
+
+			const needleQuat = new THREE.Quaternion();
+			needleQuat.setFromUnitVectors(new THREE.Vector3(0, 0, 1), needleDir);
+
+			needles.push({
+				position: needlePos,
+				rotation: new THREE.Euler().setFromQuaternion(needleQuat),
+				scale: 1.0 - ring * 0.15,
+				color: COLORS.needleTip.clone()
+			});
+		}
+	}
+
+	const needleGeometry = createNeedleGeometry();
+	const needleMaterial = new THREE.MeshStandardMaterial({
+		color: COLORS.needleBase,
+		roughness: 0.7,
+		metalness: 0.0
+	});
+	const instancedMesh = new THREE.InstancedMesh(needleGeometry, needleMaterial, needles.length);
+
+	const matrix = new THREE.Matrix4();
+	const instanceColors = new Float32Array(needles.length * 3);
+
+	needles.forEach((needle, i) => {
+		matrix.makeRotationFromEuler(needle.rotation);
+		matrix.scale(new THREE.Vector3(needle.scale, needle.scale, needle.scale));
+		matrix.setPosition(needle.position);
+		instancedMesh.setMatrixAt(i, matrix);
+		instanceColors[i * 3] = needle.color.r;
+		instanceColors[i * 3 + 1] = needle.color.g;
+		instanceColors[i * 3 + 2] = needle.color.b;
+	});
+
+	instancedMesh.instanceMatrix.needsUpdate = true;
+	instancedMesh.geometry.setAttribute('color', new THREE.InstancedBufferAttribute(instanceColors, 3));
+
+	const branchGeometry = getBranchGeometry(CONFIG.branch.baseRadius, CONFIG.branch.radialSegments);
+	const branchMaterial = new THREE.MeshStandardMaterial({
+		color: COLORS.branch,
+		map: barkTexture,
+		roughness: 0.9
+	});
+	const branchInstancedMesh = new THREE.InstancedMesh(branchGeometry, branchMaterial, branchMatrices.length);
+	branchMatrices.forEach((mat, i) => branchInstancedMesh.setMatrixAt(i, mat));
+	branchInstancedMesh.instanceMatrix.needsUpdate = true;
+
+	const subBranchGeometry = getBranchGeometry(CONFIG.subBranch.baseRadius, CONFIG.subBranch.radialSegments);
+	const subBranchInstancedMesh = new THREE.InstancedMesh(subBranchGeometry, branchMaterial, subBranchMatrices.length);
+	subBranchMatrices.forEach((mat, i) => subBranchInstancedMesh.setMatrixAt(i, mat));
+	subBranchInstancedMesh.instanceMatrix.needsUpdate = true;
+
+	const trunkGeometry = createTrunkGeometry();
+</script>
+
+<T.Group
+	position.x={position[0]}
+	position.y={position[1]}
+	position.z={position[2]}
+	scale.x={scale}
+	scale.y={scale}
+	scale.z={scale}
+>
+	<T.Mesh geometry={trunkGeometry} position.y={VISIBLE_TRUNK / 2} castShadow receiveShadow>
+		<T.MeshStandardMaterial color={COLORS.trunk} map={barkTexture} roughness={0.9} />
+	</T.Mesh>
+	<T is={branchInstancedMesh} castShadow />
+	<T is={subBranchInstancedMesh} castShadow />
+	<T is={instancedMesh} castShadow />
+</T.Group>
