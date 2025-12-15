@@ -6,7 +6,6 @@
 	import { OrbitControls as ThreeOrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 	import islandGeoJson from '$lib/data/island.json';
 	import FirTree from '$lib/components/FirTree.svelte';
-	import PineTree from '$lib/components/PineTree.svelte';
 	import ForestSilhouette from '$lib/components/ForestSilhouette.svelte';
 	import MountainSilhouette from '$lib/components/MountainSilhouette.svelte';
 	import PostProcessing from '$lib/components/PostProcessing.svelte';
@@ -63,13 +62,141 @@
 		fogDensity: number;
 		godRaysEnabled?: boolean;
 		godRaysIntensity?: number;
+		cameraPathProgress?: number;
+		onCameraReady?: (getter: () => { position: [number, number, number]; target: [number, number, number] }) => void;
+		setCameraState?: { position: [number, number, number]; target: [number, number, number] } | null;
 	}
 
 	let props: Props = $props();
 
+	// Animation keyframes (start and end only - camera path generated as arc)
+	const KEYFRAMES = [
+		{
+			camera: { position: [141.37, 20.77, 509.17], target: [10.2, -18.6, 0.5] },
+			settings: { ambientColor: "#403848", ambientIntensity: 0.18, directionalIntensity: 3, waterColor: "#3f1d1d", skyElevation: 5, skyTurbidity: 20, fogColor: "#403e41", fogDensity: 0.0019, godRaysEnabled: true, godRaysIntensity: 1 }
+		},
+		{
+			camera: { position: [-164.67, 20.77, 495.85], target: [10.2, -18.6, 0.5] },
+			settings: { ambientColor: "#403848", ambientIntensity: 0.18, directionalIntensity: 3, waterColor: "#3f1d1d", skyElevation: 0, skyTurbidity: 20, fogColor: "#403e41", fogDensity: 0.0019, godRaysEnabled: true, godRaysIntensity: 1 }
+		}
+	] as const;
+
+	// Generate arc path between keyframes (constant radius from center)
+	function generateArcPath(start: readonly number[], end: readonly number[], segments: number): THREE.Vector3[] {
+		const startAngle = Math.atan2(start[0], start[2]);
+		const endAngle = Math.atan2(end[0], end[2]);
+		const startRadius = Math.sqrt(start[0] ** 2 + start[2] ** 2);
+		const endRadius = Math.sqrt(end[0] ** 2 + end[2] ** 2);
+		const startY = start[1], endY = end[1];
+
+		const points: THREE.Vector3[] = [];
+		for (let i = 0; i <= segments; i++) {
+			const t = i / segments;
+			const angle = startAngle + (endAngle - startAngle) * t;
+			const radius = startRadius + (endRadius - startRadius) * t;
+			const y = startY + (endY - startY) * t;
+			points.push(new THREE.Vector3(
+				Math.sin(angle) * radius,
+				y,
+				Math.cos(angle) * radius
+			));
+		}
+		return points;
+	}
+
+	const cameraPath = new THREE.CatmullRomCurve3(
+		generateArcPath(KEYFRAMES[0].camera.position, KEYFRAMES[1].camera.position, 20),
+		false
+	);
+
+	const targetPath = new THREE.CatmullRomCurve3(
+		KEYFRAMES.map(kf => new THREE.Vector3(...kf.camera.target)),
+		false
+	);
+
+	function lerpColor(a: string, b: string, t: number): string {
+		const ca = new THREE.Color(a), cb = new THREE.Color(b);
+		ca.lerp(cb, t);
+		return '#' + ca.getHexString();
+	}
+
+	function lerpSettings(t: number) {
+		const a = KEYFRAMES[0].settings, b = KEYFRAMES[1].settings;
+		return {
+			ambientColor: lerpColor(a.ambientColor, b.ambientColor, t),
+			ambientIntensity: a.ambientIntensity + (b.ambientIntensity - a.ambientIntensity) * t,
+			directionalIntensity: a.directionalIntensity + (b.directionalIntensity - a.directionalIntensity) * t,
+			waterColor: lerpColor(a.waterColor, b.waterColor, t),
+			skyElevation: a.skyElevation + (b.skyElevation - a.skyElevation) * t,
+			skyTurbidity: a.skyTurbidity + (b.skyTurbidity - a.skyTurbidity) * t,
+			fogColor: lerpColor(a.fogColor, b.fogColor, t),
+			fogDensity: a.fogDensity + (b.fogDensity - a.fogDensity) * t,
+			godRaysIntensity: a.godRaysIntensity + (b.godRaysIntensity - a.godRaysIntensity) * t
+		};
+	}
+
+	let pathModeActive = $derived((props.cameraPathProgress ?? -1) >= 0);
+	let interpolatedSettings = $derived(pathModeActive ? lerpSettings(props.cameraPathProgress ?? 0) : null);
+
 	let ambientLightRef: THREE.AmbientLight | undefined;
 	let directionalLightRef: THREE.DirectionalLight | undefined;
 	let fogRef: THREE.FogExp2 | undefined;
+
+	// Update camera position and settings along path
+	$effect(() => {
+		if (pathModeActive && cameraRef && controlsRef) {
+			const t = props.cameraPathProgress ?? 0;
+			const pos = cameraPath.getPointAt(t);
+			const target = targetPath.getPointAt(t);
+			cameraRef.position.copy(pos);
+			controlsRef.target.copy(target);
+			controlsRef.update();
+
+			// Interpolate settings
+			const s = lerpSettings(t);
+			if (ambientLightRef) {
+				ambientLightRef.color.set(s.ambientColor);
+				ambientLightRef.intensity = s.ambientIntensity;
+			}
+			if (directionalLightRef) {
+				directionalLightRef.intensity = s.directionalIntensity;
+				const phi = THREE.MathUtils.degToRad(90 - s.skyElevation);
+				const theta = THREE.MathUtils.degToRad(CONFIG.sky.azimuth);
+				directionalLightRef.position.set(
+					500 * Math.sin(phi) * Math.sin(theta),
+					500 * Math.cos(phi),
+					500 * Math.sin(phi) * Math.cos(theta)
+				);
+			}
+			if (waterRef?.material?.uniforms) {
+				waterRef.material.uniforms['waterColor'].value = new THREE.Color(s.waterColor);
+			}
+			if (fogRef) {
+				fogRef.color.set(s.fogColor);
+				fogRef.density = s.fogDensity;
+			}
+		}
+	});
+
+	// Expose camera state getter to parent
+	$effect(() => {
+		if (cameraRef && controlsRef && props.onCameraReady) {
+			props.onCameraReady(() => ({
+				position: [cameraRef!.position.x, cameraRef!.position.y, cameraRef!.position.z],
+				target: [controlsRef!.target.x, controlsRef!.target.y, controlsRef!.target.z]
+			}));
+		}
+	});
+
+	// Set camera state from parent (for loading viewpoints)
+	$effect(() => {
+		if (props.setCameraState && cameraRef && controlsRef) {
+			const { position, target } = props.setCameraState;
+			cameraRef.position.set(...position);
+			controlsRef.target.set(...target);
+			controlsRef.update();
+		}
+	});
 
 	$effect(() => {
 		if (ambientLightRef) {
@@ -309,50 +436,6 @@
 		if (trees.length >= 35) break;
 	}
 
-	const pineRng = mulberry32(98765);
-	const pines: Array<{
-		position: [number, number, number];
-		scale: number;
-		seed: number;
-		trunkHeight: number;
-		trunkBaseRadius: number;
-		trunkTopRadius: number;
-		whorls: number;
-		branchesPerWhorl: number;
-		branchLength: number;
-		branchSweep: number;
-		fasciclesPerBranch: number;
-		foliageStart: number;
-	}> = [];
-
-	for (let i = 0; i < 200; i++) {
-		const x = (pineRng() - 0.5) * 280;
-		const z = (pineRng() - 0.5) * 140;
-		const scale = 1.5 + pineRng() * 3; // Small pines
-
-		if (!isOnIsland(x, -z)) continue;
-		if (distToIslandEdge(x, -z) < scale * 1.5) continue;
-
-		const height = 2 + pineRng() * 4;
-		const heightRatio = height / 6;
-		pines.push({
-			position: [x, getTerrainHeight(x, -z) - scale * 0.25, z],
-			scale,
-			seed: i + 100,
-			trunkHeight: height,
-			trunkBaseRadius: (0.1 + pineRng() * 0.06) * heightRatio,
-			trunkTopRadius: (0.015 + pineRng() * 0.015) * heightRatio,
-			whorls: 8 + Math.floor(pineRng() * 5),
-			branchesPerWhorl: 4 + Math.floor(pineRng() * 2),
-			branchLength: (0.4 + pineRng() * 0.4) * heightRatio,
-			branchSweep: 0.5 + pineRng() * 0.4,
-			fasciclesPerBranch: 10 + Math.floor(pineRng() * 6),
-			foliageStart: 0.25 + pineRng() * 0.15
-		});
-
-		if (pines.length >= 45) break;
-	}
-
 	// Create grass blade geometry
 	function createGrassBladeGeometry(): THREE.BufferGeometry {
 		const geometry = new THREE.BufferGeometry();
@@ -422,6 +505,9 @@
 >
 	<OrbitControls
 		enableDamping
+		enableZoom={!pathModeActive}
+		enableRotate={!pathModeActive}
+		enablePan={!pathModeActive}
 		maxPolarAngle={Math.PI / 2.1}
 		minDistance={CONFIG.camera.minDist}
 		maxDistance={CONFIG.camera.maxDist}
@@ -432,9 +518,9 @@
 </T.PerspectiveCamera>
 
 <Sky
-	elevation={props.skyElevation}
+	elevation={interpolatedSettings?.skyElevation ?? props.skyElevation}
 	azimuth={CONFIG.sky.azimuth}
-	turbidity={props.skyTurbidity}
+	turbidity={interpolatedSettings?.skyTurbidity ?? props.skyTurbidity}
 	rayleigh={CONFIG.sky.rayleigh}
 	mieCoefficient={CONFIG.sky.mie}
 	mieDirectionalG={0.8}
@@ -520,23 +606,6 @@
 		needleDensity={tree.needleDensity}
 		needleSize={tree.needleSize}
 		foliageStart={tree.foliageStart}
-	/>
-{/each}
-
-{#each pines as pine (pine.seed)}
-	<PineTree
-		position={pine.position}
-		scale={pine.scale}
-		seed={pine.seed}
-		trunkHeight={pine.trunkHeight}
-		trunkBaseRadius={pine.trunkBaseRadius}
-		trunkTopRadius={pine.trunkTopRadius}
-		whorls={pine.whorls}
-		branchesPerWhorl={pine.branchesPerWhorl}
-		branchLength={pine.branchLength}
-		branchSweep={pine.branchSweep}
-		fasciclesPerBranch={pine.fasciclesPerBranch}
-		foliageStart={pine.foliageStart}
 	/>
 {/each}
 
