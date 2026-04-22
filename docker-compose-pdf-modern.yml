@@ -1,0 +1,18 @@
+services:
+  latex:
+    image: texlive/texlive
+    command: sh -c "latexmk -pdf cv.tex && latexmk -c"
+    volumes:
+      - ./cv_for_print/modern:/src
+    working_dir: /src
+
+  serve:
+    image: python:3-alpine
+    command: sh -c "sleep 5 && python -m http.server 8080"
+    volumes:
+      - ./cv_for_print/modern:/src
+    working_dir: /src
+    ports:
+      - "8080:8080"
+    depends_on:
+      - latex
